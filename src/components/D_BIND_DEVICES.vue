@@ -1,5 +1,5 @@
 <template>
-  <v-layout row justify-center>
+  <v-layout row justify-start>
     <v-dialog v-model="dialog" persistent max-width="500px">
       <v-btn color="primary" dark slot="activator">Привязать новое устройство</v-btn>
       <v-card>

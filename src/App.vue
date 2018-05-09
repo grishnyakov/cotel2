@@ -76,7 +76,7 @@
         <v-container wrap grid-list-md text-xs-center class="container">
 
           <v-layout justify-center  row >
-            <v-flex xs9>
+            <v-flex xs11>
               <router-view></router-view>
             </v-flex>
           </v-layout>
@@ -96,9 +96,8 @@
       clipped: false,
 
       items: [
+        { icon: 'lightbulb_outline', text: 'Мониторинг' , action: 'messages', route: '/messages', items: []},
         { icon: 'phonelink', text: 'Устройства' , action: 'devices', route: '/devices', items: [] },
-        { icon: 'chat_bubble', text: 'Сообщения' , action: 'messages', route: '/messages', items: []},
-        { icon: 'lightbulb_outline', text: 'Уведомления' , action: 'alerts', route: '/alerts', items: []},
         { divider: true },
         { icon: 'public', text: 'Организация' , action: 'org', route: '/org', items: []},
       ],
@@ -128,43 +127,10 @@
             });
 
         },
-        requestDevices(){
-          let uri = 'http://localhost:7877/data/devices';
-          this.$parent.Axios.post(uri,{
-            username:  this.username
-          })
-            .then(response => {
-              console.log(response);
-              if (response.data.success) {
-                this.$store.dispatch('setDevices', response.data.devices )
-              }
-            })
-            .catch(function (error) {
-              console.error(error);
 
-            });
-        },
-        requestOrgInfo(){
-        let uri = 'http://localhost:7877/user/orginfo';
-        this.$parent.Axios.post(uri,{
-          username:  this.username
-        })
-          .then(response => {
-            console.log(response);
-            if (response.data.success) {
-              this.$store.dispatch('setOrgInfo', response.data.data )
-            }
-          })
-          .catch(function (error) {
-            console.error(error);
-
-          });
-      }
     },
     created: function () {
       this.username = this.$session.get('username');
-      this.requestDevices();
-      this.requestOrgInfo();
     },
 
   }

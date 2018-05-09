@@ -1,6 +1,6 @@
 
 <template>
-  <div>
+  <div >
     <D_BIND_DEVICES> </D_BIND_DEVICES>
 
     <v-data-table
@@ -8,11 +8,20 @@
       :items="devices"
       hide-actions
       class="elevation-1"
+
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-right">{{ props.item.id }}</td>
-        <td class="text-xs-right">{{ props.item.id_type }}</td>
-        <td class="text-xs-right">{{ props.item.info }}</td>
+        <td class="text-xs-left">{{ props.item.id }}</td>
+        <td class="text-xs-left">{{ props.item.id_type }}</td>
+        <td class="text-xs-left">{{ props.item.info }}</td>
+        <td class="justify-center layout px-0">
+          <v-btn icon class="mx-0" >
+            <v-icon color="teal">edit</v-icon>
+          </v-btn>
+          <v-btn icon class="mx-0" >
+            <v-icon color="pink">delete</v-icon>
+          </v-btn>
+        </td>
       </template>
     </v-data-table>
   </div>
@@ -29,15 +38,30 @@
       return {
         headers: [
           { text: 'ID', value: 'id' },
-          { text: 'Type', value: 'id_type' },
-          { text: 'info', value: 'info' }
+          { text: 'Тип устройсва', value: 'id_type' },
+          { text: 'Информация', value: 'info' },
+          { text: 'Действия', value: 'action' }
         ],
-        devices: this.$store.getters.getDevices
+        devices: []
       }
     },
-    created(){
+    mounted(){
+       this.$store.getters.getDevices.then(
+        result => {
+          this.devices = result;
+          console.log("this devices",this.devices );
+        },
+          error => {
+            console.log("err", error );
+          });
 
-      }
+    }
   }
 </script>
+
+<style>
+  .table__overflow{
+    overflow: hidden;
+  }
+</style>
 

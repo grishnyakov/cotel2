@@ -11,6 +11,7 @@ import VueRouter from 'vue-router'
 import routes from './router.js'
 
 
+
 // index.js or main.js
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 
@@ -22,24 +23,32 @@ Vue.use(VueSessionStorage);
 Vue.use(VueCookie);
 
 import axios from 'axios'
+
+import moment from 'moment'
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('hh:mm:ss   (DD.MM.YYYY)')
+  }
+});
+
 axios.defaults.withCredentials = true;
 Vue.config.productionTip = false;
 
-
-
-
+let USERNAME;
 const store = new Vuex.Store({
   state: {
     devices: [],
     orginfo: {}
   },
   actions: {
+
     setDevices({commit}, devices) {
       commit('SET_DEVICES', devices)
     },
     setOrgInfo({commit}, orginfo) {
       commit('SET_ORGINFO', orginfo)
     }
+
   },
   mutations: {
     SET_DEVICES(state, devices) {
@@ -50,32 +59,80 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    getDevices(state) {
-      return state.devices;
+    getDevices(state) {  //получить таблицу девайсов
+
+        return new Promise((resolve, reject) => {
+          if (state.devices.length > 0)  //если они уже получены, то выдаём то что есть
+            resolve(state.devices);
+          else { //иначе запрашиваем новый список двайсов
+
+              let uri = 'http://localhost:7877/data/devices';
+              axios.post(uri, {
+                username: USERNAME
+              })
+                .then(response => {
+                  console.log(response);
+                  if (response.data.success) {
+                    state.devices = response.data.devices;
+                    resolve(response.data.devices);
+                  }
+                })
+                .catch(function (error) {
+                  console.error(error);
+                  reject(error);
+                })
+            }
+          });
     },
-    getIdDevices(state) {
-      let result = [];
-      console.log(state.devices.length);
-      state.devices.forEach(function(device, i, devices) {
-          result.push(device.id);
-        console.log("push",i,device.id);
+    getIdDevices(state){
+      return new Promise((resolve, reject) => {
+        store.getters.getDevices.then(
+          result => {
+            let arr_ids = [];
+            console.log("state.devices.length",result.length);
+            result.forEach(function (device, i, result) {
+              arr_ids.push(device.id);
+              console.log("push", i, device.id);
+            });
+            console.log("arr_ids", arr_ids);
+            resolve(arr_ids);
+          },
+          error => {
+            console.log("err", error );
+            reject(error);
+          });
       });
-      console.log("return",result);
-      return result;
-    },
+
+      },
     getOrgInfo(state) {
-      return state.orginfo;
+      if (state.orginfo.length > 0)
+        return state.orginfo;
+      else {
+
+        let uri = 'http://localhost:7877/user/orginfo';
+        axios.post(uri, {
+          username: USERNAME
+        })
+          .then(response => {
+            console.log(response);
+            if (response.data.success) {
+              state.orginfo = response.data.data;
+              return response.data.data;
+            }
+          })
+          .catch(function (error) {
+            console.error(error);
+            return [];
+          });
+      }
+
     }
   },
   modules: {
     // Это приложение слишком маленькое для модулей...
+
   }
 });
-
-
-
-
-
 
 
 /* eslint-disable no-new */
@@ -88,10 +145,10 @@ let MainVue = new Vue({
     Axios: axios,
   },
   created: function () {
-    let user = this.$session.get('username'); // Set the username in session Storage
-    if(user) this.userIsAuthorized = true;
+    USERNAME = this.$session.get('username'); // Set the username in session Storage
+    if (USERNAME != "" && USERNAME) this.userIsAuthorized = true;
   },
-  components: { Login , App },
+  components: {Login, App},
   template: `<App :Axios="Axios" v-if="userIsAuthorized"></App>
              <Login :Axios="Axios"  :userIsAuthorized="userIsAuthorized" v-else></Login>`
 });
