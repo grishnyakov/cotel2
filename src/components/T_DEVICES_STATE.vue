@@ -59,12 +59,12 @@
                   <td class="text-xs-left">{{ props.item.t1 }}</td>
                   <td class="text-xs-left">{{ props.item.t2 }}</td>
                   <td class="text-xs-center">
-                    <div  v-if="props.item.vv == 0">
+                    <div  v-if="props.item.vv == 1">
                       <v-btn color="success accent-4" dark>{{props.item.vv}}
 
                       </v-btn>
                     </div>
-                    <div v-else-if="props.item.vv == 1">
+                    <div v-else-if="props.item.vv == 0">
                       <v-btn color="red accent-4" dark>{{props.item.vv}}
                         <v-icon dark right>warning</v-icon>
                       </v-btn>
