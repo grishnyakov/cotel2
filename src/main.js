@@ -27,7 +27,7 @@ import axios from 'axios'
 import moment from 'moment'
 Vue.filter('formatDate', function(value) {
   if (value) {
-    return moment(String(value)).format('hh:mm:ss   (DD.MM.YYYY)')
+    return moment(String(value)).utc(5).format('HH:mm:ss   (DD.MM.YYYY)')
   }
 });
 

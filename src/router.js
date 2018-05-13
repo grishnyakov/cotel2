@@ -5,8 +5,8 @@ let routes=[
     component: require('./components/T_DEVICES.vue').default
   },
   {
-    path: '/messages',
-    component: require('./components/T_MESSAGES.vue').default
+    path: '/monitor',
+    component: require('./components/T_MONITOR.vue').default
   },
   {
     path: '/org',

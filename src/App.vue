@@ -96,7 +96,7 @@
       clipped: false,
 
       items: [
-        { icon: 'lightbulb_outline', text: 'Мониторинг' , action: 'messages', route: '/messages', items: []},
+        { icon: 'dashboard', text: 'Мониторинг' , action: 'monitor', route: '/monitor', items: []},
         { icon: 'phonelink', text: 'Устройства' , action: 'devices', route: '/devices', items: [] },
         { divider: true },
         { icon: 'public', text: 'Организация' , action: 'org', route: '/org', items: []},

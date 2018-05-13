@@ -62,6 +62,7 @@
              // this.$session.set('username', username); // Set the username in session Storage
               this.$session.set('username', username); // Set the username in session Storage
               this.$parent.userIsAuthorized = true;
+              window.location.reload();
             }
           })
           .catch(function (error) {
