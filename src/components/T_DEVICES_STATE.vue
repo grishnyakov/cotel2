@@ -12,7 +12,7 @@
     >
 
         <template slot="items" slot-scope="props" >
-          <tr @click="props.expanded = !props.expanded; if(props.expanded) reqMessages(props.item.id_device)">
+          <tr @click="props.expanded = !props.expanded; if(props.expanded) {expandedId=props.item.id_device; reqMessages();} else expandedId=false;">
             <td>
               <v-checkbox
                 v-model="props.selected"
@@ -44,13 +44,13 @@
 
       <template slot="expand" slot-scope="props">
         <v-flex xs12 class="orange">
-
+          <!--:loading="isLoadingMessages"-->
               <v-data-table
                 :headers="headersMessages"
                 :items="messages"
                 v-bind:pagination.sync="paginationMessages"
                 class="elevation-1"
-                :loading="isLoadingMessages"
+
               >
                 <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                 <template slot="items" slot-scope="props">
@@ -125,11 +125,18 @@
         danger_list: [],  //состояния устройств
         messages: [],  //массим объектов групп сообщений с параметрами
         isLoadingMessages: false,
-
+        expandedId: false,  //развернутый id
       }
     },
     created(){
       this.reqStateDevices();
+
+
+      setInterval(function () {
+        this.reqStateDevices();
+        this.reqMessages();
+      }.bind(this), 10000);
+
     },
     methods:{
       reqStateDevices(){
@@ -157,10 +164,11 @@
           console.log("err", error);
         });
     },
-      reqMessages(idDevice){
+      reqMessages(){
+        let idDevice = this.expandedId;
         if(!idDevice) return;
 
-        this.messages = [];
+
             this.isLoadingMessages = true;
             console.log("i try get groups of messages");
             // Send a POST request
@@ -174,16 +182,17 @@
                       console.log(response);
                       if (response.data.success) {
                         //this.messages = response.data.result;
+                        this.messages = [];
                         for(let key in response.data.result){
                           this.messages.push(response.data.result[key]);
-                          console.log(" this.messages.push", response.data.result[key]);
+                          //console.log(" this.messages.push", response.data.result[key]);
                         }
 
                       }
 
                     })
                     .catch(function (error) {
-
+                      this.messages = [];
                       console.error(error);
                       this.isLoadingMessages = false;
                     });
