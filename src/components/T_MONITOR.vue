@@ -1,6 +1,6 @@
 
 <template>
- <v-container class="scroll-y" style="overflow: hidden; max-height: max-content">
+ <v-container class="scroll-y" style="overflow: hidden; max-height: 4000px;">
 
    <v-layout row wrap>
 
