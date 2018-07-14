@@ -101,13 +101,12 @@
         { divider: true },
         { icon: 'public', text: 'Организация' , action: 'org', route: '/org', items: []},
       ],
-      username: ""
     }),
     methods: {
         logOut(){
           console.log("i try logout!!");
           // Send a POST request
-          let uri = 'http://localhost:7877/logout';
+          let uri = 'http://89.31.33.164:7877/logout';
 
           this.$parent.Axios.post(uri,{
             withCredentials: true,
@@ -130,8 +129,13 @@
 
     },
     created: function () {
-      this.username = this.$session.get('username');
+
     },
+    computed: {
+      username() {
+        return this.$store.USER.username;
+      }
+    }
 
   }
 </script>

@@ -10,10 +10,10 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="Номер устройства" type="number" required></v-text-field>
+                <v-text-field label="Номер устройства"  v-model="number"  type="number" required></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="Пароль устройства" type="password" required></v-text-field>
+                <v-text-field label="Пароль устройства" v-model="pin" type="password" required></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -22,7 +22,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">Отмена</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="add_device()">Привязать</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="add_device">Привязать</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -31,29 +31,24 @@
 
 
 <script>
-  import axios from 'axios'
+
   export default {
     name: "D_BIND_DEVICE",
     data: () => ({
-      dialog: false
+      dialog: false,
+      number: 0,
+      pin: 0
     }),
-    add_device: function () {
-      let uri = 'http://localhost:7877/data/devices/bind';
-
-      axios.post(uri)
-        .then(response => {
-          console.log(response);
-          if (response.data.success) {
-            this.devices = response.data.devices;
-          }
-          this.dialog = false;
+    methods: {
+      add_device: function () {
+        let bindPromice =  this.$store.dispatch('BindDeviceToUser',{N:this.number,P:this.pin});
+        bindPromice.then(success => {
+          if(success)
+            this.dialog = false;
+          else console.error("Ошибка привязки");
         })
-        .catch(function (error) {
-          console.error(error);
 
-        });
-
-    }
+      }
   }
 </script>
 

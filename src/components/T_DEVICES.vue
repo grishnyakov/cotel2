@@ -42,11 +42,11 @@
           { text: 'Информация', value: 'info' },
           { text: 'Действия', value: 'action' }
         ],
-        devices: []
+        devices: this.$store.state.DEVICE_LIST
       }
     },
     mounted(){
-       this.$store.getters.getDevices.then(
+       this.$store.getters.GET_DEVICE_LIST.then(
         result => {
           this.devices = result;
           console.log("this devices",this.devices );

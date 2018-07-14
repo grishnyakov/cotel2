@@ -1,4 +1,3 @@
-
 <template>
   <v-container grid-list-md text-xs-center style="overflow: hidden;">
     <v-layout row warp>
@@ -32,7 +31,7 @@
         <v-text-field
           name="input-address"
           label="Адрес"
-          v-bind:value="orginfo.address"
+          v-bind:value="ORG_INFO.address"
           multi-line
         ></v-text-field>
       </v-flex>
@@ -45,14 +44,13 @@
 <script>
 
   export default {
-    data () {
+    data() {
       return {
-        orginfo: {}
+        ORG_INFO: this.$store.state.OrgInfoStore
       }
     },
-    created(){
-      this.orginfo = this.$store.getters.getOrgInfo;
-      console.log("this.$store.getters.getOrgInfo",this.$store.getters.getOrgInfo);
+    created() {
+      console.log("this.$store.getters.getOrgInfo", this.ORG_INFO);
     }
   }
 </script>
