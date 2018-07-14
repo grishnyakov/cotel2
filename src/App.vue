@@ -107,7 +107,7 @@
         logOut(){
           console.log("i try logout!!");
           // Send a POST request
-          let uri = 'http://localhost:7877/logout';
+          let uri = 'http://89.31.33.164:7877/logout';
 
           this.$parent.Axios.post(uri,{
             withCredentials: true,

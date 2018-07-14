@@ -66,7 +66,7 @@ const store = new Vuex.Store({
             resolve(state.devices);
           else { //иначе запрашиваем новый список двайсов
 
-              let uri = 'http://localhost:7877/data/devices';
+              let uri = 'http://89.31.33.164:7877/data/devices';
               axios.post(uri, {
                 username: USERNAME
               })
@@ -109,7 +109,7 @@ const store = new Vuex.Store({
         return state.orginfo;
       else {
 
-        let uri = 'http://localhost:7877/user/orginfo';
+        let uri = 'http://89.31.33.164:7877/user/orginfo';
         axios.post(uri, {
           username: USERNAME
         })

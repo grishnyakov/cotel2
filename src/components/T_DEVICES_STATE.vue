@@ -145,7 +145,7 @@
         result => {
           console.log("i try get danger list");
           // Send a POST request
-          let uri = 'http://localhost:7877/data/dangerlist';
+          let uri = 'http://89.31.33.164:7877/data/dangerlist';
           axios.post(uri,{
             devices: result
           })
@@ -172,7 +172,7 @@
             this.isLoadingMessages = true;
             console.log("i try get groups of messages");
             // Send a POST request
-            let uri = 'http://localhost:7877/data/messages';
+            let uri = 'http://89.31.33.164:7877/data/messages';
                   axios.post(uri, {
                     params: [idDevice],
                     type_query: "messages"

@@ -38,7 +38,7 @@
       dialog: false
     }),
     add_device: function () {
-      let uri = 'http://localhost:7877/data/devices/bind';
+      let uri = 'http://89.31.33.164:7877/data/devices/bind';
 
       axios.post(uri)
         .then(response => {

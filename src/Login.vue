@@ -47,7 +47,9 @@
       tryAuth(){
 
         // Send a POST request
-        let uri = 'http://localhost:7877/login';
+        //let uri = 'http://localhost:7877/login';
+        let uri = 'http://89.31.33.164:7877/login';
+        
 
         this.$parent.Axios.post(uri, {
           username: this.username,
