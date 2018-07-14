@@ -10,7 +10,7 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="Номер устройства"  v-model="number"  type="number" required></v-text-field>
+                <v-text-field label="Номер устройства" v-model="number" type="number" required></v-text-field>
               </v-flex>
               <v-flex xs12>
                 <v-text-field label="Пароль устройства" v-model="pin" type="password" required></v-text-field>
@@ -41,14 +41,15 @@
     }),
     methods: {
       add_device: function () {
-        let bindPromice =  this.$store.dispatch('BindDeviceToUser',{N:this.number,P:this.pin});
+        let bindPromice = this.$store.dispatch('BindDeviceToUser', {N: this.number, P: this.pin});
         bindPromice.then(success => {
-          if(success)
+          if (success)
             this.dialog = false;
           else console.error("Ошибка привязки");
         })
 
       }
+    }
   }
 </script>
 
