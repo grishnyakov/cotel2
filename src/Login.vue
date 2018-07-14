@@ -45,7 +45,11 @@
     },
     methods: {
       tryAuth(){
-        this.$store.dispatch('LogIN',{L: this.username,P: this.password});
+        console.log("ENTER");
+        let prom = this.$store.dispatch('LogIN',{L: this.username,P: this.password});
+        prom.then(success => {
+          this.$parent.flag_auth = success;
+        })
       }
     }
   }

@@ -41,33 +41,34 @@ const store = new Vuex.Store({
     },
     ORG_INFO: {},
 
-    
+
     DEVICE_LIST: [],
     MESSAGE_LIST: [],
     DANGER_LIST: [],
   },
   actions: {
     LogIN ({commit},U) {
-      axios.post('http://'+CONF.dev.host+':7877/login', {
-        username: U.L,
-        password: U.P
-      })
-        .then(response => {
-          console.log(response);
-          if(response.data.success === true)
-            commit('SET_USER_NAME',response.data.username);
+      return new Promise((resolve, reject)=>{
+        axios.post('http://'+CONF.dev.host+':7877/login', {
+          username: U.L,
+          password: U.P
         })
-        .catch(function (error) {
-          console.error(error);
-
-        });
+          .then(response => {
+            if(response.data.success === true)
+              commit('SET_USER_NAME',response.data.username);
+            resolve(response.data.success);
+          })
+          .catch(function (error) {
+            console.error(error);
+            resolve(false);
+          });
+      });
     },
     LogOUT({commit}){
       axios.post('http://'+CONF.dev.host+':7877/logout',{
         withCredentials: true,
       })
         .then(response => {
-          console.log(response);
           if(response.data.success)
             commit('DEL_USER_NAME');
         })
@@ -94,6 +95,7 @@ const store = new Vuex.Store({
   },
   mutations: {
     SET_USER_NAME(state, username) {
+      state.USER.username = username;
       sessionStorage.setItem('username', username); // Set the username in session Storage
     },
     DEL_USER_NAME(state) {
@@ -103,14 +105,16 @@ const store = new Vuex.Store({
     SET_DEVICE_LIST(state, devices) {
       state.DEVICE_LIST = devices;
     },
-    SET_ORG_INFO(state, orginfo) {
-      state.ORG_INFO = orginfo;
+    SET_ORG_INFO(state, info) {
+      state.ORG_INFO = info;
     },
     SET_DANGER_LIST(state, dang_list) {
       state.DANGER_LIST = dang_list;
+      console.log("COMMIT: SET_DANGER_LIST", dang_list);
     },
     SET_MESSAGE_LIST(state, m_list) {
-      state.DANGER_LIST = m_list;
+      state.MESSAGE_LIST = m_list;
+      console.log("COMMIT: SET_MESSAGE_LIST", m_list);
     }
   },
   getters: {
@@ -122,16 +126,10 @@ const store = new Vuex.Store({
 
     //ORGINFO
     GET_ORG_INFO(state, getters) {
-      if (state.ORG_INFO.length > 0)
-        return state.ORG_INFO;
-      else {
-
-        let uri = 'http://'+CONF.dev.host+':7877/user/orginfo';
-        axios.post(uri, {
-          username: getters.getUserName
+        axios.post('http://'+CONF.dev.host+':7877/user/orginfo', {
+          username: sessionStorage.getItem("username")
         })
           .then(response => {
-            console.log(response);
             if (response.data.success) {
              // state.ORG_INFO = response.data.data;
               store.commit('SET_ORG_INFO',response.data.data);
@@ -141,7 +139,6 @@ const store = new Vuex.Store({
             console.error(error);
             return [];
           });
-      }
     },
 
     //DEVICES
@@ -150,13 +147,11 @@ const store = new Vuex.Store({
           if (state.DEVICE_LIST.length > 0)  //если они уже получены, то выдаём то что есть
             resolve(state.DEVICE_LIST);
           else { //иначе запрашиваем новый список двайсов
-
-              let uri = 'http://'+CONF.dev.host+':7877/data/devices';
-              axios.post(uri, {
+              axios.post('http://'+CONF.dev.host+':7877/data/devices', {
                 username: state.USER.username
               })
                 .then(response => {
-                  console.log(response);
+                  console.log("Получены GET_DEVICE_LIST");
                   if (response.data.success) {
                     state.DEVICE_LIST = response.data.devices;
                     resolve(response.data.devices);
@@ -173,13 +168,11 @@ const store = new Vuex.Store({
       return new Promise((resolve, reject) => {
         store.getters.GET_DEVICE_LIST.then(
           result => {
+            console.log("Получены GET_ID_DEVICE_LIST");
             let arr_ids = [];
-            console.log("state.devices.length",result.length);
             result.forEach(function (device, i, result) {
               arr_ids.push(device.id);
-              console.log("push", i, device.id);
             });
-            console.log("arr_ids", arr_ids);
             resolve(arr_ids);
           },
           error => {
@@ -192,16 +185,16 @@ const store = new Vuex.Store({
     GET_DANGER_LIST(state, getters){
       return new Promise((resolve, reject) => {
         getters.GET_ID_DEVICE_LIST.then(
-          result => {
+          arr_id_devices => {
             axios.post('http://'+CONF.dev.host+':7877/data/dangerlist',{
-              devices: result
+              devices: arr_id_devices
             })
               .then(response => {
-                console.log(response);
+                console.log("Получены GET_DANGER_LIST");
                 if(response.data.success) {
                   store.commit('SET_DANGER_LIST',response.data.danger_list);
                 }
-                resolve(response.data.success);
+                resolve(response.data.danger_list);
               })
               .catch(function (error) {
                 console.error(error);
@@ -213,7 +206,7 @@ const store = new Vuex.Store({
           });
       });
     },
-    GET_MESSAGE_LIST(state,idDevice){
+    GET_MESSAGE_LIST: state => idDevice => {
       console.log("i try get groups of messages");
       return new Promise((resolve, reject) => {
         axios.post('http://'+CONF.dev.host+':7877/data/messages', {
@@ -221,16 +214,25 @@ const store = new Vuex.Store({
           type_query: "messages"
         })
           .then(response => {
-            console.log("response",response);
-            if (response.data.success) {
-              console.log(response.data.result);
-              store.commit('SET_MESSAGE_LIST',response.data.result);
+            if (response.data.success && response.data.result ) {
+              let messages = [];
+
+              for(let key in response.data.result){
+                if(response.data.result.hasOwnProperty(key)){
+                  messages.push(response.data.result[key]);
+                }
+              }
+
+              store.commit('SET_MESSAGE_LIST',messages);
+              resolve(messages);
             }
-            resolve(response.data.success);
+            else{
+              resolve(false);
+            }
           })
           .catch(function (error) {
             console.error(error);
-            reject(error);
+            reject(false);
           });
       });
     },
@@ -248,13 +250,13 @@ let MainVue = new Vue({
   router: routes,
   store,
   data: {
-
+      flag_auth: !!store.state.USER.username
   },
   created: function () {
     console.log("host:",CONF.dev.host);
-    console.log("Пользователь авторизован:",this.$store.getters.getUserName );
+    console.log("Пользователь авторизован:",this.flag_auth,this.$store.getters.getUserName );
   },
   components: {Login, App},
-  template: `<App  v-if="this.$store.getters.getUserName"></App>
+  template: `<App  v-if="flag_auth"></App>
              <Login v-else></Login>`
 });

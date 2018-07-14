@@ -12,7 +12,7 @@
 
     <template slot="items" slot-scope="props">
       <tr
-        @click="props.expanded = !props.expanded; if(props.expanded) {expandedId=props.item.id_device; reqMessages();} else expandedId=false;">
+        @click="props.expanded = !props.expanded; if(props.expanded) {expandedId=props.item.id_device; reqMessages(); } else expandedId=false;">
         <td>
           <v-checkbox
             v-model="props.selected"
@@ -130,36 +130,27 @@
     },
     created() {
       this.reqStateDevices();
-      this.reqMessages();
-
-      setInterval(function () {
-        this.reqStateDevices();
-        this.reqMessages();
-      }.bind(this), 10000);
-
     },
     methods: {
       reqStateDevices() {
-        this.$store.getters.GET_DANGER_LIST.then(success=>{
-          console.log("OkD");
-          let idDevice = this.expandedId;
-          console.log("idDevice",idDevice);
-          if (!idDevice) return;
-          this.isLoadingMessages = true;
-          this.$store.getters.GET_MESSAGE_LIST.then(res=>{
-            console.log("OkM");
-            this.isLoadingMessages = false;
-          }).catch(err=>{
-            console.log("ERR");
-            this.isLoadingMessages = false;
-          });
-        }).catch(err=>{
-          console.log("ERR");
+        this.$store.getters.GET_DANGER_LIST.then(list_d => {
+          this.danger_list = list_d;
         });
       },
       reqMessages() {
-
-      }
+        let idDevice = this.expandedId;
+        console.log("idDevice", idDevice);
+        if (!idDevice) return;
+        this.isLoadingMessages = true;
+        this.$store.getters.GET_MESSAGE_LIST(idDevice).then(list_m => {
+          if (list_m) {
+            this.messages = list_m;
+          }
+          this.isLoadingMessages = false;
+        }).catch(err => {
+          this.isLoadingMessages = false;
+        });
+      },
     }
   }
 </script>

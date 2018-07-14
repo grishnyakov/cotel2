@@ -46,10 +46,11 @@
   export default {
     data() {
       return {
-        ORG_INFO: this.$store.state.OrgInfoStore
+        ORG_INFO: this.$store.state.ORG_INFO
       }
     },
     created() {
+      this.$store.getters.GET_ORG_INFO;
       console.log("this.$store.getters.getOrgInfo", this.ORG_INFO);
     }
   }

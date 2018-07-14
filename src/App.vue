@@ -104,27 +104,7 @@
     }),
     methods: {
         logOut(){
-          console.log("i try logout!!");
-          // Send a POST request
-          let uri = 'http://89.31.33.164:7877/logout';
-
-          this.$parent.Axios.post(uri,{
-            withCredentials: true,
-          })
-            .then(response => {
-              console.log(response);
-              if(response.data.success)
-              {
-                this.$session.remove('username');
-                location.hash = "";
-                location.reload();
-              }
-            })
-            .catch(function (error) {
-              console.error(error);
-
-            });
-
+          this.$store.state.dispatch('LogOUT');
         },
 
     },
@@ -133,7 +113,7 @@
     },
     computed: {
       username() {
-        return this.$store.USER.username;
+        return this.$store.getters.getUserName;
       }
     }
 
