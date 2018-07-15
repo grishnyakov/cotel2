@@ -1,5 +1,8 @@
+
 <template>
-  <v-app id="inspire">
+  <div>
+    <RegisterUser v-if="flag_register_user" ></RegisterUser>
+    <v-app id="inspire">
     <v-layout row justify-center>
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
@@ -22,6 +25,7 @@
 
             </v-card-text>
             <v-card-actions>
+              <v-btn color="green darken-1" @click.native="flag_register_user = true" flat>Регистрация нового пользователя</v-btn>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" type="submit" flat>Войти</v-btn>
             </v-card-actions>
@@ -30,17 +34,20 @@
       </v-dialog>
     </v-layout>
   </v-app>
+  </div>
 </template>
 
 
 <script>
+  import RegisterUser from "./RegisterUser.vue"
   export default {
     name: "Login",
     data () {
       return {
         dialog: true,
         username: "",
-        password: ""
+        password: "",
+        flag_register_user: false
       }
     },
     methods: {
@@ -50,8 +57,9 @@
         prom.then(success => {
           this.$parent.flag_auth = success;
         })
-      }
-    }
+      },
+    },
+    components: {RegisterUser}
   }
 </script>
 

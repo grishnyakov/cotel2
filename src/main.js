@@ -76,6 +76,30 @@ const store = new Vuex.Store({
           console.error(error);
         });
     },
+    RegU ({commit},U) {
+      return new Promise((resolve, reject)=>{
+        axios.post('http://'+CONF.dev.host+':7877/reguser', {
+          id_org: U.id_org,
+          login: U.login,
+          id_role: U.id_role,
+          password: U.password,
+          name1: U.name1,
+          name2: U.name2,
+          name3: U.name3,
+          number_tel: U.number_tel
+        })
+          .then(response => {
+            if(response.data.success === true)
+              console.log("USER CREATED SECCESSFUL!");
+            else console.log("USER CREATED FAILED!");
+            resolve(response.data.success);
+          })
+          .catch(function (error) {
+            console.error(error);
+            resolve(false);
+          });
+      });
+    },
     BindDeviceToUser({state},D){
       return new Promise((resolve, reject) => {
           axios.post('http://'+CONF.dev.host+':7877/data/devices/bind', {
