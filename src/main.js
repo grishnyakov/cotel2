@@ -22,7 +22,6 @@ Vue.use(Vuetify);
 Vue.use(VueSessionStorage);
 Vue.use(VueCookie);
 
-import axios from 'axios'
 import moment from 'moment'
 
 Vue.filter('formatDate', function(value) {
@@ -31,7 +30,6 @@ Vue.filter('formatDate', function(value) {
   }
 });
 
-axios.defaults.withCredentials = true;
 Vue.config.productionTip = false;
 
 const store = new Vuex.Store({
@@ -40,66 +38,12 @@ const store = new Vuex.Store({
       username: sessionStorage.getItem('username')
     },
     ORG_INFO: {},
-
-
     DEVICE_LIST: [],
     MESSAGE_LIST: [],
     DANGER_LIST: [],
   },
   actions: {
-    LogIN ({commit},U) {
-      return new Promise((resolve, reject)=>{
-        axios.post('http://'+CONF.dev.host+':7877/login', {
-          username: U.L,
-          password: U.P
-        })
-          .then(response => {
-            if(response.data.success === true)
-              commit('SET_USER_NAME',response.data.username);
-            resolve(response.data.success);
-          })
-          .catch(function (error) {
-            console.error(error);
-            resolve(false);
-          });
-      });
-    },
-    LogOUT({commit}){
-      axios.post('http://'+CONF.dev.host+':7877/logout',{
-        withCredentials: true,
-      })
-        .then(response => {
-          if(response.data.success)
-            commit('DEL_USER_NAME');
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
-    },
-    RegU ({commit},U) {
-      return new Promise((resolve, reject)=>{
-        axios.post('http://'+CONF.dev.host+':7877/reguser', {
-          id_org: U.id_org,
-          login: U.login,
-          id_role: U.id_role,
-          password: U.password,
-          name1: U.name1,
-          name2: U.name2,
-          name3: U.name3,
-          number_tel: U.number_tel
-        })
-          .then(response => {
-            if(response.data.success === true)
-              console.log("USER CREATED SECCESSFUL!");
-            else console.log("USER CREATED FAILED!");
-            resolve(response.data.success);
-          })
-          .catch(function (error) {
-            console.error(error);
-            resolve(false);
-          });
-      });
-    },
+
     BindDeviceToUser({state},D){
       return new Promise((resolve, reject) => {
           axios.post('http://'+CONF.dev.host+':7877/data/devices/bind', {
@@ -146,8 +90,6 @@ const store = new Vuex.Store({
     getUserName(state){
       return state.USER.username;
     },
-
-
     //ORGINFO
     GET_ORG_INFO(state, getters) {
         axios.post('http://'+CONF.dev.host+':7877/user/orginfo', {
@@ -260,12 +202,7 @@ const store = new Vuex.Store({
           });
       });
     },
-
   },
-  modules: {
-    // Это приложение слишком маленькое для модулей...
-
-  }
 });
 
 

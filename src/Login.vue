@@ -60,7 +60,6 @@
       },
     },
     components: {RegisterUser}
-    
   }
 </script>
 
