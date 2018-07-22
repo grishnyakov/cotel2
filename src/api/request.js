@@ -2,9 +2,11 @@
   This file requests any data from server (node.js)
  */
 import axios from 'axios'
-const CONF = require('../config/index');
+import CONF from'../../config/index';
+
 
 axios.defaults.withCredentials = true;
+
 
 
 export default {

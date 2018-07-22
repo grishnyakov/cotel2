@@ -87,7 +87,7 @@
     methods: {
       regNewUser(){
         console.log("ENTER");
-        let prom = this.$store.dispatch('RegU',
+        let prom = this.$store.dispatch('RegUser',
           {
             id_org: this.id_org,
             login: this.login,

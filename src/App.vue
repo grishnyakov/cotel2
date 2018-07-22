@@ -68,7 +68,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
 
-          <v-btn flat >  <v-icon>person</v-icon>{{username}}</v-btn>
+          <v-btn flat >  <v-icon>person</v-icon>{{login}}</v-btn>
           <v-btn flat @click.native="logOut()">Выход</v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -112,7 +112,7 @@
 
     },
     computed: {
-      username() {
+      login() {
         return this.$store.getters.getUserName;
       }
     }
