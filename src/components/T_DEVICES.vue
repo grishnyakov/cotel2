@@ -5,7 +5,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="devices"
+      :items="DEVICE_LIST"
       hide-actions
       class="elevation-1"
 
@@ -32,6 +32,8 @@
 
 <script>
   import D_BIND_DEVICES from "./D_BIND_DEVICES";
+  import {mapGetters, mapState} from 'vuex'
+
   export default {
     components: {D_BIND_DEVICES},
     data () {
@@ -42,19 +44,19 @@
           { text: 'Информация', value: 'info' },
           { text: 'Действия', value: 'action' }
         ],
-        devices: this.$store.state.DEVICE_LIST
       }
     },
+    computed: {
+      ...mapState({
+        DEVICE_LIST: state => state.devices.DEVICE_LIST,
+        User: state => state.user.USER,
+      }),
+    },
     mounted(){
-       this.$store.getters.GET_DEVICE_LIST.then(
-        result => {
-          this.devices = result;
-          console.log("this devices",this.devices );
-        },
-          error => {
-            console.log("err", error );
-          });
-
+      let prom = this.$store.dispatch('devices/RequestNewDeviceList',this.User);
+      prom.then(result => {
+        console.log("result: ",result);
+      })
     }
   }
 </script>

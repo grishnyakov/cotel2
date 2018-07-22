@@ -41,7 +41,7 @@
     }),
     methods: {
       add_device: function () {
-        let bindPromice = this.$store.dispatch('BindDeviceToUser', {N: this.number, P: this.pin});
+        let bindPromice = this.$store.dispatch('devices/BindDeviceToUser', {number: this.number, pin: this.pin});
         bindPromice.then(success => {
           if (success)
             this.dialog = false;

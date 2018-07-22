@@ -22,14 +22,13 @@ const actions = {
   LogIN ({commit,rootState},User) {
     if(User.login && User.password)
     request.getDataFromServer('/login', User)
-      .then((data) =>{
-        if(data.success){
-          console.log("login: SUCCESS!",data);
-          commit('SetUserInfo', data);
-          console.log(rootState);
+      .then((result) =>{
+        if(result.success){
+          console.log("login: SUCCESS!",result);
+          commit('SetUserInfo', {login: result.login});
         }
         else {
-          console.log("login: FAILED!",data);
+          console.log("login: FAILED!",result);
         }
       })
       .catch((er) =>{

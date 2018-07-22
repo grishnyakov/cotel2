@@ -98,7 +98,7 @@
 
 
 <script>
-
+  import {mapState, mapGetters, mapActions} from "vuex";
   export default {
 
     data() {
@@ -127,6 +127,17 @@
         expandedId: false,  //развернутый id
         id_device: 0
       }
+    },
+    computed:{
+      ...mapState({
+        DEVICE_LIST: state => state.devices.DEVICE_LIST,
+        User: state => state.user.USER,
+      }),
+      ...mapActions('devices', [
+        'RequestNewDeviceList',
+        'RequestNewAlertList',
+        'RequestNewMessageList',
+      ]),
     },
     created() {
       this.reqStateDevices();
