@@ -20,32 +20,33 @@ const getters = {
   GetAlertList(state, getters, rootState) {
     return state.ALERT_LIST;
   },
-  GetIdsOfDevices(state,getters, rootState) {
-    return getters.GetDeviceList.map( device => device.id);
+  GetIdsOfDevices(state, getters, rootState) {
+    return getters.GetDeviceList.map(device => device.id);
   },
 };
 
 const actions = {
-  RequestNewDeviceList({commit, state},User) {
-    request.getDataFromServer('/data/devices', {login: User.login})
-      .then((result) => {
-        if (result.success) {
-          console.log("RequestDeviceList: SUCCESS!", result);
-          commit('SetDeviceList', result.devices);
-        }
-        else {
-          console.log("RequestDeviceList: FAILED!", result);
-        }
-        return result.success;
-      })
-      .catch((er) => {
-
-      });
-
+  RequestNewDeviceList({commit, state}, User) {
+    return new Promise(((resolve, reject) => {
+      request.getDataFromServer('/data/devices', {login: User.login})
+        .then((result) => {
+          if (result.success) {
+            console.log("RequestDeviceList: SUCCESS!", result);
+            commit('SetDeviceList', result.devices);
+          }
+          else {
+            console.log("RequestDeviceList: FAILED!", result);
+          }
+          resolve(result.success);
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    }));
   },
-  RequestNewAlertList({commit, state}) {
-    return request.getDataFromServer('/data/dangerlist', {
-      devices: state.getters.GetIdsOfDevices
+  RequestNewAlertList({commit, state, getters}) {
+    request.getDataFromServer('/data/dangerlist', {
+      devices: getters.GetIdsOfDevices
     })
       .then((result) => {
         if (result.success) {
@@ -60,13 +61,15 @@ const actions = {
 
       });
   },
-  RequestNewMessageList({commit, state, getters},ids_devices) {
-    return request.getDataFromServer('/data/messages', {
-      params: [ids_devices],
-      type_query: "messages"})
-      .then((result) => {
-        if (result.success && result.result) {
-          console.log("RequestNewMessageList: SUCCESS!", result);
+  RequestNewMessageList({commit, state, getters}, ids_devices) {
+    return new Promise((resolve, reject) => {
+      request.getDataFromServer('/data/messages', {
+        params: [ids_devices],
+        type_query: "messages"
+      })
+        .then((result) => {
+          if (result.success && result.result) {
+            console.log("RequestNewMessageList: SUCCESS!", result);
             let messages = [];
             for (let key in result.result) {
               if (result.result.hasOwnProperty(key)) {
@@ -74,14 +77,17 @@ const actions = {
               }
             }
             commit('SetMsssageList', messages);
-        }
-        else {
-          console.log("RequestNewMessageList: FAILED!", result);
-        }
-      })
-      .catch((er) => {
-
-      });
+            resolve(true);
+          }
+          else {
+            console.log("RequestNewMessageList: FAILED!", result);
+            resolve(false);
+          }
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    });
   },
 
   BindDeviceToUser({commit, state, getters}, Device, User) {
@@ -116,7 +122,7 @@ const mutations = {
     console.log("COMMIT: GetMsssageList", messages);
   },
   SetAlertList(state, alerts) {
-    state.DANGER_LIST = alerts;
+    state.ALERT_LIST = alerts;
     console.log("COMMIT: GetAlertList", alerts);
   },
 };

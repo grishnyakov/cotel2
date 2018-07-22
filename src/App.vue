@@ -68,7 +68,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items class="hidden-sm-and-down">
 
-          <v-btn flat >  <v-icon>person</v-icon>{{login}}</v-btn>
+          <v-btn flat >  <v-icon>person</v-icon>{{User.login}}</v-btn>
           <v-btn flat @click.native="logOut()">Выход</v-btn>
         </v-toolbar-items>
       </v-toolbar>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-
+  import {mapGetters, mapState} from 'vuex'
   export default {
 
     name: 'App',
@@ -112,11 +112,18 @@
 
     },
     computed: {
-      login() {
-        return this.$store.getters.getUserName;
-      }
+      ...mapState({
+        User: state => state.user.USER,
+      }),
+    },
+    mounted(){
+      this.$store.dispatch('devices/RequestNewDeviceList',this.User)
+        .then(result => {
+          this.$store.dispatch('devices/RequestNewAlertList');
+        }).catch(er => {
+        }
+      );
     }
-
   }
 </script>
 

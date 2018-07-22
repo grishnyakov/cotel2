@@ -2,7 +2,7 @@
 
   <v-data-table
     :headers="headers"
-    :items="danger_list"
+    :items="ALERT_LIST"
     hide-actions
     class="elevation-1"
     item-key="id_device"
@@ -47,7 +47,7 @@
         <!--:loading="isLoadingMessages"-->
         <v-data-table
           :headers="headersMessages"
-          :items="messages"
+          :items="MESSAGE_LIST"
           v-bind:pagination.sync="paginationMessages"
           class="elevation-1"
 
@@ -121,8 +121,6 @@
           {text: 'Эл-во', value: 'ee', align: "center", sortable: false},
         ],
         paginationMessages: {'sortBy': 'time', 'descending': true, 'rowsPerPage': -1},
-        danger_list: this.$store.state.DANGER_LIST,  //состояния устройств
-        messages: this.$store.state.MESSAGE_LIST,  //массим объектов групп сообщений с параметрами
         isLoadingMessages: false,
         expandedId: false,  //развернутый id
         id_device: 0
@@ -131,32 +129,21 @@
     computed:{
       ...mapState({
         DEVICE_LIST: state => state.devices.DEVICE_LIST,
+        ALERT_LIST: state => state.devices.ALERT_LIST,
+        MESSAGE_LIST: state => state.devices.MESSAGE_LIST,
         User: state => state.user.USER,
       }),
-      ...mapActions('devices', [
-        'RequestNewDeviceList',
-        'RequestNewAlertList',
-        'RequestNewMessageList',
-      ]),
     },
     created() {
-      this.reqStateDevices();
+      this.$store.dispatch('devices/RequestNewAlertList');
     },
     methods: {
-      reqStateDevices() {
-        this.$store.getters.GET_DANGER_LIST.then(list_d => {
-          this.danger_list = list_d;
-        });
-      },
       reqMessages() {
-        let idDevice = this.expandedId;
-        console.log("idDevice", idDevice);
-        if (!idDevice) return;
+        if (!this.expandedId) return;
+
         this.isLoadingMessages = true;
-        this.$store.getters.GET_MESSAGE_LIST(idDevice).then(list_m => {
-          if (list_m) {
-            this.messages = list_m;
-          }
+        let prom = this.$store.dispatch('devices/RequestNewMessageList',this.expandedId);
+        prom.then(result => {
           this.isLoadingMessages = false;
         }).catch(err => {
           this.isLoadingMessages = false;
