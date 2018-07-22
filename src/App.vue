@@ -104,7 +104,7 @@
     }),
     methods: {
         logOut(){
-          this.$store.dispatch('LogOUT');
+          this.$store.dispatch('user/LogOUT');
         },
 
     },

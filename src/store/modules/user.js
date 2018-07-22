@@ -15,106 +15,109 @@ const state = {
     hash: '',
     id: 0
   },
-  userAuthorized: false
+  userAuthorized: false,
+  ORG_INFO: {}
 };
 
 const actions = {
-  LogIN ({commit,rootState},User) {
-    if(User.login && User.password)
-    request.getDataFromServer('/login', User)
-      .then((result) =>{
-        if(result.success){
-          console.log("login: SUCCESS!",result);
-          commit('SetUserInfo', {login: result.login});
-        }
-        else {
-          console.log("login: FAILED!",result);
-        }
-      })
-      .catch((er) =>{
+  LogIN({commit, rootState}, User) {
+    if (User.login && User.password)
+      request.getDataFromServer('/login', User)
+        .then((result) => {
+          if (result.success) {
+            console.log("login: SUCCESS!", result);
+            commit('SetUserInfo', {login: result.login});
+          }
+          else {
+            console.log("login: FAILED!", result);
+          }
+        })
+        .catch((er) => {
 
-      });
+        });
   },
-  LogOUT({commit}){
+  LogOUT({commit}) {
     request.getDataFromServer('/logout', {})
-      .then((data) =>{
-        if(data.success){
-          console.log("logout: SUCCESS!",data);
+      .then((data) => {
+        if (data.success) {
+          console.log("logout: SUCCESS!", data);
           commit('DropAuthorization');
         }
         else {
-          console.log("logout: FAILED!",data);
+          console.log("logout: FAILED!", data);
         }
       })
-      .catch((er) =>{
+      .catch((er) => {
 
       });
   },
-  RegUser ({commit},User) {
-    let params = {
-      id_org: User.id_org,
-      login: User.login,
-      id_role: User.id_role,
-      password: User.password,
-      name1: User.name1,
-      name2: User.name2,
-      name3: User.name3,
-      number_tel: User.number_tel
-    };
-
-    request.getDataFromServer('/reguser', params)
-      .then((data) =>{
-        if(data.success){
-          if(response.data.success === true)
+  RegUser({commit}, User) {
+    return new Promise((resolve, reject) => {
+      let params = {
+        id_org: User.id_org,
+        login: User.login,
+        id_role: User.id_role,
+        password: User.password,
+        name1: User.name1,
+        name2: User.name2,
+        name3: User.name3,
+        number_tel: User.number_tel
+      };
+      request.getDataFromServer('/reguser', params)
+        .then((data) => {
+          if (data.success) {
             console.log("reguser: SECCESSFUL!");
-          else console.log("reguser: FAILED!");
-        }
-        else {
-          console.log("logout: ERROR!",data);
-        }
-      })
-      .catch((er) =>{
-
-      });
+          }
+          else {
+            console.log("reguser: FAILED!");
+          }
+          resolve(data.success);
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    })
   },      //new user
 
-  RequestOrgInfo({commit},User) {
-    request.getDataFromServer('/orginfo', {login: User.login})
-      .then((data) =>{
-        if(data.success){
-          if(response.data.success === true){
-            console.log("RequestOrgInfo: SECCESSFUL!",response.data);
-            //commit in the store
-
+  RequestOrgInfo({commit}, User) {
+    return new Promise((resolve, reject) => {
+      request.getDataFromServer('/user/orginfo', {login: User.login})
+        .then((data) => {
+          if (data.success) {
+            console.log("RequestOrgInfo: SECCESSFUL!", data);
+            commit("SetOrgInfo", data.orginfo);
           }
-          else console.log("RequestOrgInfo: FAILED!",response.data);
-        }
-        else {
-          console.log("RequestOrgInfo: ERROR!",data);
-        }
-      })
-      .catch((er) =>{
-
-      });
+          else {
+            console.error("RequestOrgInfo: FAILED!", data);
+          }
+          resolve(data.success);
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    })
   }, //not yet finished
 };
 
 const getters = {
-  UserInfo (state, getters, rootState) {
+  UserInfo(state, getters, rootState) {
     return state.USER;
   },
-  AuthState (state, getters, rootState) {
+  AuthState(state, getters, rootState) {
     return state.userAuthorized;
   },
 };
 
 const mutations = {
-  SetUserInfo (state, userInfo) {
+  SetUserInfo(state, userInfo) {
     state.USER = userInfo;
     state.userAuthorized = true;
   },
-  DropAuthorization (state) {
+  DropAuthorization(state) {
     state.userAuthorized = false;
+  },
+  SetOrgInfo(state, orgInfo) {
+    state.ORG_INFO = orgInfo;
   },
 };
 

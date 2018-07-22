@@ -7,7 +7,7 @@
           name="input-1"
           label="Название"
           id="testing"
-          v-bind:value="orginfo.name"
+          v-bind:value="ORG_INFO.name"
         ></v-text-field>
       </v-flex>
 
@@ -18,7 +18,7 @@
           label="контактный телефон"
           class="input-group--focused"
           prepend-icon="phone"
-          v-bind:value="orginfo.tel1"
+          v-bind:value="ORG_INFO.tel1"
           single-line
         ></v-text-field>
       </v-flex>
@@ -42,16 +42,16 @@
 
 
 <script>
-
   export default {
     data() {
       return {
-        ORG_INFO: this.$store.state.ORG_INFO
+        ORG_INFO: {}
       }
     },
     created() {
-      this.$store.getters.GET_ORG_INFO;
-      console.log("this.$store.getters.getOrgInfo", this.ORG_INFO);
+      this.$store.dispatch('user/RequestOrgInfo',this.$store.state.user.USER).then(result => {
+        this.ORG_INFO = this.$store.state.user.ORG_INFO
+      });
     }
   }
 </script>

@@ -87,7 +87,7 @@
     methods: {
       regNewUser(){
         console.log("ENTER");
-        let prom = this.$store.dispatch('RegUser',
+        let prom = this.$store.dispatch('user/RegUser',
           {
             id_org: this.id_org,
             login: this.login,
@@ -99,7 +99,14 @@
             number_tel: this.number_tel
           });
         prom.then(success => {
+          if(success)
             this.$parent.flag_register_user = false;
+          else {
+            console.error("fail register");
+          }
+        });
+        prom.catch(err => {
+          console.error(err);
         })
       }
     }
