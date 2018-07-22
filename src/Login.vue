@@ -5,7 +5,7 @@
       <v-layout row justify-center>
         <v-dialog v-model="dialog" persistent max-width="500px">
           <v-card>
-            <v-form ref="form" v-model="valid" lazy-validation>
+            <v-form ref="loginForm" v-model="valid" lazy-validation>
               <v-card-title>
                 <span class="headline">Авторизация</span>
               </v-card-title>
@@ -86,7 +86,7 @@
     },
     methods: {
       submit() {
-        if (this.$refs.form.validate()) {
+        if (this.$refs.loginForm.validate()) {
           let prom = this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
           prom.then(result => {
             this.$parent.flag_auth = result;
