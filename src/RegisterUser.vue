@@ -110,6 +110,7 @@
         ],
         dialog: true,
 
+
         selectedRole: {text: "Пользователь", id:4},
         roles: [
           {text: "Пользователь", id:4},

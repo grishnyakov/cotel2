@@ -19,6 +19,7 @@ const state = {
   ORG_INFO: {}
 };
 
+
 const actions = {
   LogIN({commit, rootState}, User) {
     if (User.login && User.password)
