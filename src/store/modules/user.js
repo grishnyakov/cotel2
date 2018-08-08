@@ -23,11 +23,12 @@ const state = {
 const actions = {
   LogIN({commit, rootState}, User) {
     if (User.login && User.password)
-      request.getDataFromServer('/login', User)
+      return request.getDataFromServer('/login', User)
         .then((result) => {
           if (result.success) {
             console.log("login: SUCCESS!", result);
             commit('SetUserInfo', {login: result.login});
+            this.$emit('login', true);
           }
           else {
             console.log("login: FAILED!", result);
@@ -43,6 +44,7 @@ const actions = {
         if (data.success) {
           console.log("logout: SUCCESS!", data);
           commit('DropAuthorization');
+          this.$emit('login', false);
         }
         else {
           console.log("logout: FAILED!", data);

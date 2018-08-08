@@ -17,21 +17,7 @@
          </v-card-text>
        </v-card>
      </v-flex>
-     <v-flex xs12>
-       <v-card >
-         <v-card-title primary-title>
-           <div>
-             <h3 class="headline mb-0">Температура</h3>
-           </div>
-         </v-card-title>
-         <v-card-text>
-           <T_LINE_CHART   :data="chartData"
-                           :options="{responsive: true, maintainAspectRatio: true}"
 
-           ></T_LINE_CHART>
-         </v-card-text>
-       </v-card>
-     </v-flex>
 
    </v-layout>
 

@@ -87,10 +87,7 @@
     methods: {
       submit() {
         if (this.$refs.loginForm.validate()) {
-          let prom = this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
-          prom.then(result => {
-            this.$parent.flag_auth = result;
-          });
+          this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
         }
       }
     },
