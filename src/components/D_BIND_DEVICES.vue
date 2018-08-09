@@ -133,19 +133,28 @@
 
       },
       add_device: function () {
-        let bindDevPromise = this.$store.dispatch('devices/BindDeviceToUser', {
+        this.$store.dispatch('devices/BindDeviceToUser', {
             id_device: this.number,
             pin: this.pin,
             info: this.info,
-            lat: this.currentPlace.geometry.location.lat(),
-            lng: this.currentPlace.geometry.location.lng(),
+            lat: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lat(): null,
+            lng: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lng(): null,
             formatted_address: this.currentPlace.formatted_address,
-            place_id: this.currentPlace.place_id});
-        bindDevPromise.then(success => {
-          // if (success)
-          //   this.dialog = false;
-          // else console.error("Ошибка привязки");
-        })
+            place_id: this.currentPlace.place_id})
+          .then(result => {
+            if (result.success) {
+              console.log("Успешно привязано", result);
+              this.dialog = false;
+            }
+            else {
+              alert("Ошибка привязки: "+ result.error);
+              console.log("Ошибка привязки: ", result.error);
+            }
+          })
+          .catch(error=>{
+            alert("Ошибка привязки: "+ error);
+            console.error("Ошибка : ",error);
+          });
 
       }
     }

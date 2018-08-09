@@ -95,21 +95,19 @@ const actions = {
   },
 
   BindDeviceToUser({commit, state, getters}, props) {
-    request.getDataFromServer('/data/devices/bind',props)
-      .then((result) => {
-        if (result.success) {
-          console.log("BindDeviceToUser: SUCCESS!", result);
-        }
-        else {
-          console.log("RequestNewAlertList: FAILED!", result);
-        }
-        return result.success;
-      })
-      .catch((er) => {
-        return false;
-      });
+    return new Promise((resolve, reject) => {
+      request.getDataFromServer('/data/devices/bind', props)
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((er) => {
+          reject(er);
+        });
+
+    })
   }
-};
+}
+;
 
 const mutations = {
   SetDeviceList(state, devices) {
@@ -127,7 +125,7 @@ const mutations = {
   ResetState(state, payload) {
     for (let f in state) {
       if (typeof initialState[f] === "object") {
-        state[f] = Object.assign({},initialState[f])
+        state[f] = Object.assign({}, initialState[f])
       }
       else {
         state[f] = initialState[f];

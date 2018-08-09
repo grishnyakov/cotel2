@@ -18,9 +18,6 @@
           <v-btn icon class="mx-0" >
             <v-icon color="teal">edit</v-icon>
           </v-btn>
-          <v-btn icon class="mx-0" >
-            <v-icon color="pink">delete</v-icon>
-          </v-btn>
         </td>
       </template>
     </v-data-table>
