@@ -109,7 +109,7 @@
         }
         // marker.setPosition(place.geometry.location);
         // marker.setVisible(true);
-
+        this.markers = [];
         this.markers.push({
           position: {
             lat: place.geometry.location.lat(),
