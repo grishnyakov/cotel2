@@ -25,12 +25,11 @@ state.__proto__ = {initialState: initialState};
 const actions = {
   LogIN({commit, rootState}, User) {
     if (User.login && User.password)
-      return request.getDataFromServer('/login', User)
+      request.getDataFromServer('/login', User)
         .then((result) => {
           if (result.success) {
             console.log("login: SUCCESS!", result);
             commit('SetUserInfo', {login: result.login});
-            this.$emit('login', true);
           }
           else {
             console.log("login: FAILED!", result);
@@ -59,6 +58,12 @@ const actions = {
     });
 
   },
+  GetSession({commit},params){ //получить текущую сессию и авторизовать пользователя
+    request.getDataFromServer('/getSession', params)
+      .then((result) => {
+        if (result.success) commit('SetUserInfo', {login: result.login});
+      })
+  },
   RegUser({commit}, User) {
     return new Promise((resolve, reject) => {
       let params = {
@@ -86,7 +91,6 @@ const actions = {
         });
     })
   },      //new user
-
   RequestOrgInfo({commit}, User) {
     return new Promise((resolve, reject) => {
       request.getDataFromServer('/user/orginfo', {login: User.login})

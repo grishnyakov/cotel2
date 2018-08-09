@@ -63,9 +63,6 @@ let MainVue = new Vue({
   el: '#app',
   router: routes,
   store,
-  data: {
-
-  },
   created: function () {
     console.log("urlServer:",CONF.dev.urlServer);
   },

@@ -93,7 +93,9 @@
         }
       }
     },
-
+    created: function () {
+      this.$store.dispatch('user/GetSession', {}); //попытка получить текущую сессию если она есть
+    },
     components: {RegisterUser}
   }
 </script>
