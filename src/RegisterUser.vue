@@ -49,7 +49,12 @@
 
                 </v-layout>
                 <v-layout align-center>
-                  <v-checkbox v-model="agreementState" hide-details class="shrink mr-2" color="info" ></v-checkbox>
+                  <v-checkbox
+                    v-model="agreementState"
+                    hide-details
+                    class="shrink mr-2"
+                    color="info"
+                  ></v-checkbox>
                   <div> Подтверждаю согласие на обработку персональных данных </div>
                 </v-layout>
               </v-container>

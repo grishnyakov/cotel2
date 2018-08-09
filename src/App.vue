@@ -109,10 +109,10 @@
     methods: {
       logOut() {
         this.$store.dispatch('user/LogOUT').then(result => {
-          if (result) {
-
+          if(result) {
             this.$store.dispatch('ResetStates');
           }
+          else console.error("failed logout");
         });
       },
     },

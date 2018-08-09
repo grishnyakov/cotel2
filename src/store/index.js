@@ -14,7 +14,6 @@ export default new Vuex.Store({
       Object.keys(state).forEach((key) => {
         commit('ResetState',state[key]);
       });
-
     }
   },
   getters: {},

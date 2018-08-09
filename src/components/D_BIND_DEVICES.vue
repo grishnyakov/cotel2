@@ -10,22 +10,33 @@
           <v-container grid-list-md style="overflow: hidden;">
             <v-layout wrap>
               <v-flex xs7>
-                <v-text-field label="Номер " v-model="number" type="number" required></v-text-field>
+                <v-text-field mask="N NNN NNN NNN" label="Номер "  :counter="maxCountN" :rules="maxCountRule" v-model.number="number" required></v-text-field>
               </v-flex>
               <v-flex xs5>
                 <v-text-field label="PIN " v-model="pin" type="password" required></v-text-field>
               </v-flex>
             </v-layout>
             <v-layout wrap>
+              <v-flex xs12>
+                <v-text-field label="Описание "  v-model="info" type="text"></v-text-field>
+              </v-flex>
+            </v-layout>
+
+
+            <v-layout wrap>
               <GmapAutocomplete
                 v-on:place_changed="place_changed"
-                style="width: 500px;"
+
+                style="width: 500px; height: 30px; padding: 5px; margin: 5px"
               ></GmapAutocomplete>
 
               <v-flex xs12>
                 <GmapMap
-                  :center="{lat:10, lng:10}"
-                  :zoom="7"
+                  :center="{
+                    lat:55.4649113,
+                    lng:65.30535120000002
+                  }"
+                  :zoom="11"
                   map-type-id="terrain"
                   style="width: 500px; height: 300px"
                   ref="mapRef"
@@ -62,14 +73,20 @@
     name: "D_BIND_DEVICE",
     data: () => ({
       dialog: false,
-      number: 0,
-      pin: 0,
+      number: null,
+      pin: null,
+      info: "",
       markers: [],
+      currentPlace: {},
+      maxCountN: 10,
+      maxCountRule:[
+        (v) => !!v || 'Это поле обязательное',
+      ],
     }),
     methods: {
       place_changed: function (place) {
         console.log("place_changed!", place);
-
+        this.currentPlace = place;
         if (!place.geometry) {
           // User entered the name of a Place that was not suggested and
           // pressed the Enter key, or the Place Details request failed.
@@ -116,11 +133,18 @@
 
       },
       add_device: function () {
-        let bindPromice = this.$store.dispatch('devices/BindDeviceToUser', {number: this.number, pin: this.pin});
-        bindPromice.then(success => {
-          if (success)
-            this.dialog = false;
-          else console.error("Ошибка привязки");
+        let bindDevPromise = this.$store.dispatch('devices/BindDeviceToUser', {
+            id_device: this.number,
+            pin: this.pin,
+            info: this.info,
+            lat: this.currentPlace.geometry.location.lat(),
+            lng: this.currentPlace.geometry.location.lng(),
+            formatted_address: this.currentPlace.formatted_address,
+            place_id: this.currentPlace.place_id});
+        bindDevPromise.then(success => {
+          // if (success)
+          //   this.dialog = false;
+          // else console.error("Ошибка привязки");
         })
 
       }

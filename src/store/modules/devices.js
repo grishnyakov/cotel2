@@ -94,13 +94,8 @@ const actions = {
     });
   },
 
-  BindDeviceToUser({commit, state, getters}, Device, User) {
-    request.getDataFromServer('/data/devices/bind',
-      {
-        login: User.login,
-        number: Device.number,
-        pin: Device.pin,
-      })
+  BindDeviceToUser({commit, state, getters}, props) {
+    request.getDataFromServer('/data/devices/bind',props)
       .then((result) => {
         if (result.success) {
           console.log("BindDeviceToUser: SUCCESS!", result);

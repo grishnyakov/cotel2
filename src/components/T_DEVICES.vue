@@ -62,7 +62,7 @@
 </script>
 
 <style>
-  .table__overflow{
+  .table__overflow, .container{
     overflow: hidden;
   }
 </style>
