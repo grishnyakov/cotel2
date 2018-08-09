@@ -5,8 +5,7 @@
 import request from '../../api/request'
 
 
-// initial state
-const state = {
+let initialState = {
   USER: {
     login: '', //
     name1: '', //Ivanov
@@ -16,9 +15,12 @@ const state = {
     id: 0
   },
   userAuthorized: false,
-  ORG_INFO: {}
+  ORG_INFO: {},
+  __proto__: {}
 };
 
+const state = Object.assign({}, initialState);
+state.__proto__ = {initialState: initialState};
 
 const actions = {
   LogIN({commit, rootState}, User) {
@@ -39,20 +41,23 @@ const actions = {
         });
   },
   LogOUT({commit}) {
-    request.getDataFromServer('/logout', {})
-      .then((data) => {
-        if (data.success) {
-          console.log("logout: SUCCESS!", data);
-          commit('DropAuthorization');
-          this.$emit('login', false);
-        }
-        else {
-          console.log("logout: FAILED!", data);
-        }
-      })
-      .catch((er) => {
+    return new Promise((resolve, reject) => {
+      request.getDataFromServer('/logout', {})
+        .then((data) => {
+          if (data.success) {
+            console.log("logout: SUCCESS!", data);
+            resolve(true);
+          }
+          else {
+            console.log("logout: FAILED!", data);
+            reject(false);
+          }
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    });
 
-      });
   },
   RegUser({commit}, User) {
     return new Promise((resolve, reject) => {
@@ -106,9 +111,6 @@ const getters = {
   UserInfo(state, getters, rootState) {
     return state.USER;
   },
-  AuthState(state, getters, rootState) {
-    return state.userAuthorized;
-  },
 };
 
 const mutations = {
@@ -116,12 +118,10 @@ const mutations = {
     state.USER = userInfo;
     state.userAuthorized = true;
   },
-  DropAuthorization(state) {
-    state.userAuthorized = false;
-  },
   SetOrgInfo(state, orgInfo) {
     state.ORG_INFO = orgInfo;
   },
+
 };
 
 export default {
@@ -129,5 +129,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

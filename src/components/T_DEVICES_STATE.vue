@@ -50,7 +50,7 @@
           :items="MESSAGE_LIST"
           v-bind:pagination.sync="paginationMessages"
           class="elevation-1"
-
+          no-data-text="Нет сообщений от устройств"
         >
           <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
           <template slot="items" slot-scope="props">

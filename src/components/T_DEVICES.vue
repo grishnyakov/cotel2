@@ -8,7 +8,7 @@
       :items="DEVICE_LIST"
       hide-actions
       class="elevation-1"
-
+      no-data-text="Нет привязанных устройств"
     >
       <template slot="items" slot-scope="props">
         <td class="text-xs-left">{{ props.item.id }}</td>

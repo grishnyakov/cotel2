@@ -14,34 +14,43 @@
                   <v-flex xs4>
                     <v-text-field label="Имя"  v-model="name1" :rules="nameRules" type="text" required></v-text-field>
                   </v-flex>
-                  <v-flex xs4>
-                    <v-text-field label="Фамилия"  v-model="name2" :rules="nameRules" type="text" required></v-text-field>
-                  </v-flex>
+
                   <v-flex xs4>
                     <v-text-field label="Отчество"  v-model="name3" :rules="nameRules" type="text" required></v-text-field>
                   </v-flex>
 
+                  <v-flex xs4>
+                    <v-text-field label="Фамилия"  v-model="name2" :rules="nameRules" type="text" required></v-text-field>
+                  </v-flex>
+
                   <v-flex xs6>
-                    <v-text-field label="Логин" v-model="login" :rules="loginRules" required></v-text-field>
+                    <v-text-field label="Логин (ИНН)" v-model="login" :rules="loginRules" required></v-text-field>
                   </v-flex>
                   <v-flex xs6>
                     <v-text-field label="Пароль"  v-model="password" :rules="passwordRules" type="password" required></v-text-field>
                   </v-flex>
 
 
-                  <v-flex xs6>
-                    <v-select
-                      v-model="selectedRole"
-                      :items="roles"
-                      label="Роль"
-                      required
-                    ></v-select>
-                  </v-flex>
+
+
+                  <!--<v-flex xs6>-->
+                    <!--<v-select-->
+                      <!--v-model="selectedRole"-->
+                      <!--:items="roles"-->
+                      <!--label="Роль"-->
+                      <!--required-->
+                    <!--&gt;</v-select>-->
+                  <!--</v-flex>-->
+
+
                   <v-flex xs6>
                     <v-text-field label="Телефон" :rules="telRules"  placeholder="922 555 9999" counter="10" prefix="+7" v-model.number="number_tel" mask="NNN NNN NNNN" ></v-text-field>
                   </v-flex>
 
-
+                </v-layout>
+                <v-layout align-center>
+                  <v-checkbox v-model="agreementState" hide-details class="shrink mr-2" color="info" ></v-checkbox>
+                  <div> Подтверждаю согласие на обработку персональных данных </div>
                 </v-layout>
               </v-container>
               <v-alert
@@ -63,7 +72,7 @@
             <v-card-actions>
               <v-btn color="orange darken-1" @click.native="$parent.flag_register_user = false" flat>Отмена</v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1"  @click="submit"  type="submit" :disabled="!valid" flat>Зарегистрировать</v-btn>
+              <v-btn color="blue darken-1"  @click="submit"  type="submit" :disabled="!valid || !agreementState" flat>Зарегистрировать</v-btn>
             </v-card-actions>
           </v-form>
         </v-card>
@@ -106,11 +115,11 @@
         number_tel: null,
         telRules:[
           (v) => !!v || 'Это поле обязательное',
-          (v) => !!v && v.length <= 10 || 'Введите 10 цифр номера телефона',
+          (v) => !!v && v.toString().length === 10 || 'Введите 10 цифр номера телефона',
         ],
         dialog: true,
 
-
+        agreementState: false,
         selectedRole: {text: "Пользователь", id:4},
         roles: [
           {text: "Пользователь", id:4},
@@ -135,11 +144,15 @@
             });
           prom.then(success => {
             if (success){
+              this.errorAlert = false;
               this.successAlert = true;
+
               this.decrementCounter();
             }
             else {
+              this.successAlert = false;
               this.errorAlert = true;
+
               console.error("fail register");
             }
           });

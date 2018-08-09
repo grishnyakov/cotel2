@@ -3,18 +3,20 @@
     <RegisterUser v-if="flag_register_user"></RegisterUser>
     <v-app id="inspire">
       <v-layout row justify-center>
-        <v-dialog v-model="dialog" persistent max-width="500px">
+        <v-dialog v-model="dialog" persistent max-width="400px">
           <v-card>
             <v-form ref="loginForm" v-model="valid" lazy-validation>
               <v-card-title>
-                <span class="headline">Авторизация</span>
+                <div class="headline">Авторизация</div>
+                <v-spacer></v-spacer>
+                <v-btn class="headline" flat color="blue">ЛК СИТ</v-btn>
               </v-card-title>
               <v-card-text>
-                <v-container grid-list-md>
+                <v-container grid-list-md style="overflow: hidden;">
                   <v-layout wrap>
                     <v-flex xs12>
                       <v-text-field
-                        label="Логин"
+                        label="Логин (ИНН)"
                         :rules="loginRules"
                         v-model="login"
                         required>
@@ -35,8 +37,8 @@
 
               </v-card-text>
               <v-card-actions>
-                <v-btn color="green darken-1" @click.native="flag_register_user = true" flat>Регистрация нового
-                  пользователя
+                <v-btn color="green darken-1" @click.native="flag_register_user = true" flat>Регистрация физ.
+                  лица
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1"

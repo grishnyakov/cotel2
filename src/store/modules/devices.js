@@ -3,12 +3,16 @@
  */
 import request from '../../api/request'
 
-// initial state
-const state = {
+
+let initialState = {
   DEVICE_LIST: [],
   MESSAGE_LIST: [], // from devices
   ALERT_LIST: [],  // alerts (for example: crash device, max temperature or humidity)
+  __proto__: {}
 };
+
+const state = Object.assign({}, initialState);
+state.__proto__ = {initialState: initialState};
 
 const getters = {
   GetDeviceList(state, getters, rootState) {
@@ -125,6 +129,17 @@ const mutations = {
     state.ALERT_LIST = alerts;
     console.log("COMMIT: GetAlertList", alerts);
   },
+  ResetState(state, payload) {
+    for (let f in state) {
+      if (typeof initialState[f] === "object") {
+        state[f] = Object.assign({},initialState[f])
+      }
+      else {
+        state[f] = initialState[f];
+      }
+    }
+    console.log(state);
+  }
 };
 
 export default {
