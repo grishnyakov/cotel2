@@ -39,7 +39,7 @@
           { text: 'ID', value: 'id' },
           { text: 'Тип устройсва', value: 'id_type' },
           { text: 'Информация', value: 'info' },
-          { text: 'Действия', value: 'action' }
+          { text: 'Действия', value: 'action', align: "center",sortable: false }
         ],
       }
     },
@@ -59,8 +59,12 @@
 </script>
 
 <style>
-  .table__overflow, .container{
+  .table__overflow{
     overflow: hidden;
+  }
+  .container{
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 </style>
 

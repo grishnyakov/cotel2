@@ -1,8 +1,9 @@
 <template>
   <v-layout row justify-start>
     <v-dialog v-model="dialog" persistent max-width="500px">
-      <v-btn color="primary" dark slot="activator">Привязать новое устройство</v-btn>
-      <v-card>
+      <v-btn color="primary" dark  @click="clear" slot="activator">Привязать новое устройство</v-btn>
+      <v-form ref="bindDeviceForm" v-model="valid" lazy-validation>
+        <v-card>
         <v-card-title>
           <span class="headline">Привязка нового устройства</span>
         </v-card-title>
@@ -10,10 +11,10 @@
           <v-container grid-list-md style="overflow: hidden;">
             <v-layout wrap>
               <v-flex xs7>
-                <v-text-field mask="N NNN NNN NNN" label="Номер "  :counter="maxCountN" :rules="maxCountRule" v-model.number="number" required></v-text-field>
+                <v-text-field mask="N NNN NNN NNN" label="Номер " :rules="requiredField" :counter="10" v-model.number="number" required></v-text-field>
               </v-flex>
               <v-flex xs5>
-                <v-text-field label="PIN " v-model="pin" type="password" required></v-text-field>
+                <v-text-field label="PIN " v-model="pin" :rules="requiredField" type="password" required></v-text-field>
               </v-flex>
             </v-layout>
             <v-layout wrap>
@@ -24,10 +25,11 @@
 
 
             <v-layout wrap>
+
+              Место установки
               <GmapAutocomplete
                 v-on:place_changed="place_changed"
-
-                style="width: 500px; height: 30px; padding: 5px; margin: 5px"
+                style="width: 500px; height: 30px; padding: 5px; margin: 5px; border-bottom: 1px solid gray; outline: none;"
               ></GmapAutocomplete>
 
               <v-flex xs12>
@@ -53,14 +55,24 @@
               </v-flex>
             </v-layout>
           </v-container>
+          <v-divider class="mt-1"></v-divider>
+          <v-alert
+            :value="true"
+            type="error"
+            v-model="errorAlert"
+          >
+            {{errorMessage}}
+          </v-alert>
 
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">Отмена</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="add_device">Привязать</v-btn>
+          <v-btn color="blue darken-1"  @click="submit"  type="submit" :disabled="!valid" flat>Привязать</v-btn>
+
         </v-card-actions>
       </v-card>
+      </v-form>
     </v-dialog>
   </v-layout>
 </template>
@@ -76,14 +88,45 @@
       number: null,
       pin: null,
       info: "",
+      errorMessage: "Возникла ошибка. Обратитесь в техподдержку: sit45@mail.ru",
+      valid: true, // valid inputs on form
+      successAlert: false, //flag to show success creation message
+      errorAlert: false,//flag to show alert message
       markers: [],
       currentPlace: {},
-      maxCountN: 10,
-      maxCountRule:[
-        (v) => !!v || 'Это поле обязательное',
-      ],
+      requiredField: [
+        v => !!v || 'Это поле обязательное',
+      ]
     }),
     methods: {
+      submit() {
+        if (this.$refs.bindDeviceForm.validate()) {
+          this.$store.dispatch('devices/BindDeviceToUser', {
+            id_device: this.number,
+            pin: this.pin,
+            info: this.info,
+            lat: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lat(): null,
+            lng: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lng(): null,
+            formatted_address: this.currentPlace.formatted_address,
+            place_id: this.currentPlace.place_id})
+            .then(result => {
+              if (result.success) {
+                console.log("Успешно привязано", result);
+                this.dialog = false;
+              }
+              else {
+                this.errorMessage = "Ошибка привязки: "+ result.error;
+                this.errorAlert = true;
+                console.error("Ошибка : ",result.error);
+              }
+            })
+            .catch(error=>{
+              this.errorMessage = "Ошибка привязки: "+ error;
+              this.errorAlert = true;
+              console.error("Ошибка : ",error);
+            });
+        }
+      },
       place_changed: function (place) {
         console.log("place_changed!", place);
         this.currentPlace = place;
@@ -132,30 +175,10 @@
         // infowindow.open(map, marker);
 
       },
-      add_device: function () {
-        this.$store.dispatch('devices/BindDeviceToUser', {
-            id_device: this.number,
-            pin: this.pin,
-            info: this.info,
-            lat: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lat(): null,
-            lng: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lng(): null,
-            formatted_address: this.currentPlace.formatted_address,
-            place_id: this.currentPlace.place_id})
-          .then(result => {
-            if (result.success) {
-              console.log("Успешно привязано", result);
-              this.dialog = false;
-            }
-            else {
-              alert("Ошибка привязки: "+ result.error);
-              console.log("Ошибка привязки: ", result.error);
-            }
-          })
-          .catch(error=>{
-            alert("Ошибка привязки: "+ error);
-            console.error("Ошибка : ",error);
-          });
-
+      clear: function () {
+        this.$refs.bindDeviceForm.reset();
+        this.errorAlert = false;
+        console.log("clear");
       }
     }
   }

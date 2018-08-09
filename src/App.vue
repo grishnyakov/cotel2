@@ -59,14 +59,14 @@
     <v-toolbar color="amber" app absolute clipped-left>
       <v-toolbar-side-icon @click.native="drawer = !drawer"></v-toolbar-side-icon>
       <span class="title ml-3 mr-5">SIT&nbsp;<span class="text">System</span></span>
-      <v-text-field
-        solo-inverted
-        flat
-        label="Поиск"
-        prepend-icon="search"
-      ></v-text-field>
+      <!--<v-text-field-->
+        <!--solo-inverted-->
+        <!--flat-->
+        <!--label="Поиск"-->
+        <!--prepend-icon="search"-->
+      <!--&gt;</v-text-field>-->
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
+      <v-toolbar-items class="">
 
         <v-btn flat>
           <v-icon>person</v-icon>
@@ -100,10 +100,11 @@
       clipped: false,
 
       items: [
-        {icon: 'dashboard', text: 'Мониторинг', action: 'monitor', route: '/monitor', items: []},
         {icon: 'phonelink', text: 'Устройства', action: 'devices', route: '/devices', items: []},
+        {icon: 'dashboard', text: 'Мониторинг', action: 'monitor', route: '/monitor', items: []},
+
         {divider: true},
-        {icon: 'public', text: 'Организация', action: 'org', route: '/org', items: []},
+        // {icon: 'public', text: 'Организация', action: 'org', route: '/org', items: []},
       ],
     }),
     methods: {
