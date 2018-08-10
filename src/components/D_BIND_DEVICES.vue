@@ -79,7 +79,7 @@
 
 
 <script>
-
+  import {mapState} from 'vuex'
   export default {
 
     name: "D_BIND_DEVICE",
@@ -98,6 +98,11 @@
         v => !!v || 'Это поле обязательное',
       ]
     }),
+    computed: {
+      ...mapState({
+        User: state => state.user.USER,
+      }),
+    },
     methods: {
       submit() {
         if (this.$refs.bindDeviceForm.validate()) {
@@ -113,6 +118,7 @@
               if (result.success) {
                 console.log("Успешно привязано", result);
                 this.dialog = false;
+                let prom = this.$store.dispatch('devices/RequestNewDeviceList',this.User);
               }
               else {
                 this.errorMessage = "Ошибка привязки: "+ result.error;

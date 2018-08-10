@@ -51,9 +51,6 @@
     },
     mounted(){
       let prom = this.$store.dispatch('devices/RequestNewDeviceList',this.User);
-      prom.then(result => {
-        console.log("result: ",result);
-      })
     }
   }
 </script>

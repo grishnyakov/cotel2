@@ -56,7 +56,6 @@ const actions = {
           reject(er);
         });
     });
-
   },
   GetSession({commit},params){ //получить текущую сессию и авторизовать пользователя
     request.getDataFromServer('/getSession', params)

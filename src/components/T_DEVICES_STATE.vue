@@ -104,6 +104,8 @@
     data() {
       return {
         selectedDevices: [],
+        intervalID: null,
+        intervalIDMessages: null,
         headers: [
           {text: '', value: 'check', sortable: false},
           {text: 'ID устройства', value: 'id_device', sortable: false},
@@ -135,7 +137,13 @@
       }),
     },
     created() {
-      this.$store.dispatch('devices/RequestNewAlertList');
+      let self = this;
+      this.intervalID = setInterval(function() { self.$store.dispatch('devices/RequestNewAlertList') },   5000);
+      this.intervalIDMessages = setInterval(function() { self.reqMessages() },   5000);
+    },
+    destroyed(){
+      clearInterval(this.intervalID);
+      clearInterval(this.intervalIDMessages);
     },
     methods: {
       reqMessages() {
