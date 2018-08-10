@@ -13,8 +13,8 @@ module.exports = {
     proxyTable: {},
 
     // Various Dev Server settings
-    urlServer: 'http://localhost:7877', //server ip
-    //urlServer: 'http://89.31.33.164:7877', //server ip
+   // urlServer: 'http://localhost:7877', //server ip
+    urlServer: 'http://89.31.33.164:7877', //server ip
     host: 'localhost', // can be overwritten by process.env.HOST
   //    host: '89.31.33.164', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
