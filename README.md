@@ -1,21 +1,14 @@
 # cotel
 
-> A Vue.js project
+> Vue.js project
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Система позволяет отслеживать аварии на котлах в котельной. 
+Польователь системы - диспетчер.
+Показания датчиков получает receiver и записывает их в БД. Так же он отвечает за создание уведомлений об авариях (alerts).
+Пароли шифруются sha512.
+Реализовано на фронте:
+- регистрация пользователя
+- авторизация
+- сессии
+- получение и отображение показаний датчиков
+- получение и отображение уведомлений об авариях
