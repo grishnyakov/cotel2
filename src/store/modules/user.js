@@ -25,43 +25,41 @@ state.__proto__ = {initialState: initialState};
 
 const actions = {
   LogIN({commit, rootState}, User) {
-    if (User.login && User.password)
-      request.getDataFromServer('/login', User)
-        .then((result) => {
-          if (result.success) {
-            console.log("login: SUCCESS!", result);
-            commit('SetUserInfo', {login: result.login});
-          }
-          else {
-            console.log("login: FAILED!", result);
-          }
-        })
-        .catch((er) => {
-
-        });
+    return new Promise((resolve, reject) => {
+      if (User.login && User.password)
+        request.getDataFromServer('/login', User)
+          .then((result) => {
+            if (result.success) {
+              if (result.login)
+                commit('SetUserInfo', {login: User.login});
+              resolve(result.status);
+            }
+            else reject(result);
+          })
+          .catch((er) => {
+            reject(er);
+          });
+    });
   },
   LogOUT({commit}) {
     return new Promise((resolve, reject) => {
       request.getDataFromServer('/logout', {})
         .then((data) => {
-          if (data.success) {
-            console.log("logout: SUCCESS!", data);
-            resolve(true);
-          }
-          else {
-            console.log("logout: FAILED!", data);
-            reject(false);
-          }
+          if (data.success) resolve(data.success);
+          else reject(data);
         })
         .catch((er) => {
           reject(er);
         });
     });
   },
-  GetSession({commit},params){ //получить текущую сессию и авторизовать пользователя
-    request.getDataFromServer('/getSession', params)
+  GetSession({commit}, params) { //получить текущую сессию и авторизовать пользователя
+    request.getDataFromServer('/user/getSession', params)
       .then((result) => {
-        if (result.success) commit('SetUserInfo', {login: result.login});
+        if (result.success && result.login) commit('SetUserInfo', {login: result.login});
+      })
+      .catch(error => {
+        console.error(error);
       })
   },
   RegUser({commit}, User) {
@@ -74,37 +72,30 @@ const actions = {
         name1: User.name1,
         name2: User.name2,
         name3: User.name3,
-        number_tel: User.number_tel
+        number_tel: User.number_tel,
+        email: User.email,
       };
       request.getDataFromServer('/reguser', params)
         .then((data) => {
-          if (data.success) {
-            console.log("reguser: SECCESSFUL!");
-          }
-          else {
-            console.log("reguser: FAILED!");
-          }
-          resolve(data.success);
+          if (data.success) resolve(data.success);
+          else reject(data);
         })
         .catch((er) => {
           reject(er);
         });
     })
-  },      //new user
+  },
   ValidateEmail({commit}, User) {
     return new Promise((resolve, reject) => {
       let params = {
+        query: User.query,
         email: User.email,
+        code: User.code,
       };
-      request.getDataFromServer('/validateEmail', params)
+      request.getDataFromServer('/user/validateEmail', params)
         .then((data) => {
-          if (data.success) {
-            console.log("validateEmail: SECCESSFUL!");
-          }
-          else {
-            console.log("validateEmail: FAILED!");
-          }
-          resolve(data.success);
+          if (data.success) resolve(data.success);
+          else reject(data);
         })
         .catch((er) => {
           reject(er);

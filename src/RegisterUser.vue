@@ -1,6 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-layout row justify-center>
+
       <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
           <v-form ref="registerForm" v-model="valid" lazy-validation>
@@ -12,24 +13,29 @@
                 <v-layout wrap>
 
                   <v-flex xs4>
-                    <v-text-field label="Имя" v-model="name1" :rules="[rules.required,rules.counter_min]" type="text" required></v-text-field>
-                  </v-flex>
-
-                  <v-flex xs4>
-                    <v-text-field label="Отчество" v-model="name3" :rules="[rules.required,rules.counter_min]" type="text"
+                    <v-text-field label="Имя" v-model="name1" :rules="[rules.required,rules.counter_min]" type="text"
                                   required></v-text-field>
                   </v-flex>
 
                   <v-flex xs4>
-                    <v-text-field label="Фамилия" v-model="name2" :rules="[rules.required,rules.counter_min]" type="text"
+                    <v-text-field label="Отчество" v-model="name3" :rules="[rules.required,rules.counter_min]"
+                                  type="text"
+                                  required></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs4>
+                    <v-text-field label="Фамилия" v-model="name2" :rules="[rules.required,rules.counter_min]"
+                                  type="text"
                                   required></v-text-field>
                   </v-flex>
 
                   <v-flex xs6>
-                    <v-text-field label="Логин" v-model="login" :rules="[rules.required,rules.counter_min]" required></v-text-field>
+                    <v-text-field label="Логин" v-model="login" :rules="[rules.required,rules.counter_min]"
+                                  required></v-text-field>
                   </v-flex>
                   <v-flex xs6>
-                    <v-text-field label="Пароль" v-model="password" :rules="[rules.required,rules.counter_min]" type="password"
+                    <v-text-field label="Пароль" v-model="password" :rules="[rules.required,rules.counter_min]"
+                                  type="password"
                                   required></v-text-field>
                   </v-flex>
 
@@ -58,7 +64,8 @@
 
 
                   <v-flex xs4>
-                    <v-text-field label="Телефон" :rules="[rules.phone,rules.required]" placeholder="922 555 9999" counter="10" prefix="+7"
+                    <v-text-field label="Телефон" :rules="[rules.phone,rules.required]" placeholder="922 555 9999"
+                                  counter="10" prefix="+7"
                                   v-model.number="number_tel" mask="NNN NNN NNNN"></v-text-field>
                   </v-flex>
 
@@ -151,6 +158,8 @@
 
 
 <script>
+
+
   export default {
     name: "RegisterUser",
     data() {
@@ -170,7 +179,7 @@
         id_role: "",
         password: "",
         password2: "",
-        email:"",
+        email: "",
         rules: {
           required: value => !!value || 'обязательное поле',
           equalPasswords: value => (value && value === this.password) || 'Пароли не совпадают',
@@ -191,14 +200,14 @@
         roles: [
           {text: "Пользователь", id: 4},
           {text: "Управляющий компании", id: 4},
-          {text: "Диспетчер", id: 7}]
+          {text: "Диспетчер", id: 7}],
       }
     },
     methods: {
       submit() {
         if (this.$refs.registerForm.validate()) {
           console.log("ENTER");
-          let prom = this.$store.dispatch('user/RegUser',
+          let promise = this.$store.dispatch('user/RegUser',
             {
               id_org: this.id_org,
               login: this.login,
@@ -207,35 +216,33 @@
               name1: this.name1,
               name2: this.name2,
               name3: this.name3,
-              number_tel: this.number_tel
+              number_tel: this.number_tel,
+              email: this.email
             });
-          prom.then(success => {
-            if (success) {
-              this.errorAlert = false;
-              this.successAlert = true;
 
-              this.decrementCounter();
+          promise.then(onFulfilled, onRejected);
+          let self = this;
+
+          function onFulfilled(success) {
+            if (success) {
+              self.errorAlert = false;
+              self.flag_validate_contact = true;
             }
             else {
-              this.successAlert = false;
-              this.errorAlert = true;
+              self.successAlert = false;
+              self.errorAlert = true;
 
               console.error("fail register");
             }
-          });
-          prom.catch(err => {
-            this.errorAlert = true;
+          }
+
+          function onRejected(err) {
+            self.errorAlert = true;
             console.error(err);
-          })
+          }
         }
       },
-      decrementCounter: function () {
-        if (this.countTimer-- <= 0) {
-          this.$parent.flag_register_user = false;
-        }
-        else setTimeout(this.decrementCounter, 1000);
-      }
-    }
+    },
   }
 </script>
 

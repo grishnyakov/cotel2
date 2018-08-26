@@ -1,5 +1,6 @@
 <template>
   <div>
+    <ValidateContact v-if="flag_validate_contact"></ValidateContact>
     <RegisterUser v-if="flag_register_user"></RegisterUser>
     <v-app id="inspire">
       <v-layout row justify-center>
@@ -60,6 +61,8 @@
 
 <script>
   import RegisterUser from "./RegisterUser.vue"
+  import ValidateContact from "./components/D_VALIDATE_CONTACT.vue"
+
   import {mapGetters, mapState} from 'vuex'
 
 
@@ -67,6 +70,7 @@
     name: "Login",
     data() {
       return {
+        flag_validate_contact: false,
         valid: true,
         dialog: true,
 
@@ -91,14 +95,23 @@
     methods: {
       submit() {
         if (this.$refs.loginForm.validate()) {
-          this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
+          let promice = this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
+          promice.then(
+            status=>{
+              if(status === 1)
+                this.flag_validate_contact=true;
+            },
+            error=>{
+              console.error(error);
+            }
+          )
         }
       }
     },
     created: function () {
       this.$store.dispatch('user/GetSession', {}); //попытка получить текущую сессию если она есть
     },
-    components: {RegisterUser}
+    components: {RegisterUser,ValidateContact}
   }
 </script>
 
