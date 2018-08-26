@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-layout row justify-center>
-      <v-dialog  v-model="dialog" persistent max-width="500px">
+      <v-dialog v-model="dialog" persistent max-width="500px">
         <v-card>
           <v-form ref="registerForm" v-model="valid" lazy-validation>
             <v-card-title>
@@ -12,50 +12,78 @@
                 <v-layout wrap>
 
                   <v-flex xs4>
-                    <v-text-field label="Имя"  v-model="name1" :rules="nameRules" type="text" required></v-text-field>
+                    <v-text-field label="Имя" v-model="name1" :rules="[rules.required,rules.counter_min]" type="text" required></v-text-field>
                   </v-flex>
 
                   <v-flex xs4>
-                    <v-text-field label="Отчество"  v-model="name3" :rules="nameRules" type="text" required></v-text-field>
+                    <v-text-field label="Отчество" v-model="name3" :rules="[rules.required,rules.counter_min]" type="text"
+                                  required></v-text-field>
                   </v-flex>
 
                   <v-flex xs4>
-                    <v-text-field label="Фамилия"  v-model="name2" :rules="nameRules" type="text" required></v-text-field>
+                    <v-text-field label="Фамилия" v-model="name2" :rules="[rules.required,rules.counter_min]" type="text"
+                                  required></v-text-field>
                   </v-flex>
 
                   <v-flex xs6>
-                    <v-text-field label="Логин (ИНН)" v-model="login" :rules="loginRules" required></v-text-field>
+                    <v-text-field label="Логин" v-model="login" :rules="[rules.required,rules.counter_min]" required></v-text-field>
                   </v-flex>
                   <v-flex xs6>
-                    <v-text-field label="Пароль"  v-model="password" :rules="passwordRules" type="password" required></v-text-field>
+                    <v-text-field label="Пароль" v-model="password" :rules="[rules.required,rules.counter_min]" type="password"
+                                  required></v-text-field>
                   </v-flex>
 
 
+                  <v-flex xs6>
 
+                  </v-flex>
+
+                  <v-flex xs6>
+                    <v-text-field label="Пароль ещё раз"
+                                  v-model="password2"
+                                  :rules="[rules.required, rules.equalPasswords]"
+                                  type="password" required>
+
+                    </v-text-field>
+                  </v-flex>
 
                   <!--<v-flex xs6>-->
-                    <!--<v-select-->
-                      <!--v-model="selectedRole"-->
-                      <!--:items="roles"-->
-                      <!--label="Роль"-->
-                      <!--required-->
-                    <!--&gt;</v-select>-->
+                  <!--<v-select-->
+                  <!--v-model="selectedRole"-->
+                  <!--:items="roles"-->
+                  <!--label="Роль"-->
+                  <!--required-->
+                  <!--&gt;</v-select>-->
                   <!--</v-flex>-->
 
 
-                  <v-flex xs6>
-                    <v-text-field label="Телефон" :rules="telRules"  placeholder="922 555 9999" counter="10" prefix="+7" v-model.number="number_tel" mask="NNN NNN NNNN" ></v-text-field>
+                  <v-flex xs4>
+                    <v-text-field label="Телефон" :rules="[rules.phone,rules.required]" placeholder="922 555 9999" counter="10" prefix="+7"
+                                  v-model.number="number_tel" mask="NNN NNN NNNN"></v-text-field>
+                  </v-flex>
+
+                  <v-flex xs8>
+                    <v-text-field
+                      v-model="email"
+                      :rules="[rules.required, rules.email]"
+                      label="E-mail"
+                      required
+                    ></v-text-field>
                   </v-flex>
 
                 </v-layout>
                 <v-layout align-center>
-                  <v-checkbox
-                    v-model="agreementState"
-                    hide-details
-                    class="shrink mr-2"
-                    color="info"
-                  ></v-checkbox>
-                  <div> Подтверждаю согласие на обработку персональных данных </div>
+                  <v-flex xs12>
+                    <v-checkbox
+                      v-model="agreementState"
+                      color="green"
+                    >
+                      <div slot="label" @click.stop="">
+                        Согласен с
+                        <a href="javascript:;" @click.stop="dialogLicence = true">пользовательским соглашением</a>
+                      </div>
+                    </v-checkbox>
+                  </v-flex>
                 </v-layout>
               </v-container>
               <v-alert
@@ -63,7 +91,8 @@
                 type="success"
                 v-model="successAlert"
               >
-                Пользователь успешно создан в системе.<br>Через {{countTimer}} секунды вы будете переадресованы на страницу авторизации...
+                Пользователь успешно создан в системе.<br>Через {{countTimer}} секунды вы будете переадресованы на
+                страницу авторизации...
               </v-alert>
               <v-alert
                 :value="true"
@@ -77,9 +106,43 @@
             <v-card-actions>
               <v-btn color="orange darken-1" @click.native="$parent.flag_register_user = false" flat>Отмена</v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1"  @click="submit"  type="submit" :disabled="!valid || !agreementState" flat>Зарегистрировать</v-btn>
+              <v-btn color="blue darken-1" @click="submit" type="submit" :disabled="!valid || !agreementState" flat>
+                Зарегистрировать
+              </v-btn>
             </v-card-actions>
           </v-form>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogLicence" persistent max-width="600px">
+        <v-card>
+
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title
+          >
+            Privacy Policy
+          </v-card-title>
+          <v-card-text>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+            ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+            nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+            anim id est laborum.
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              flat
+              @click="dialogLicence = false"
+            >
+              Согласен
+            </v-btn>
+          </v-card-actions>
+
         </v-card>
       </v-dialog>
     </v-layout>
@@ -90,14 +153,14 @@
 <script>
   export default {
     name: "RegisterUser",
-    data () {
+    data() {
       return {
         successAlert: false, //flag to show success creation message
         errorAlert: false,//flag to show alert message
-
+        dialogLicence: false, //пользовательское соглашение - диалог
         countTimer: 4,
 
-        valid: true, // valid inputs on form
+        valid: false, // valid inputs on form
         id_org: "",
         login: "",
         loginRules: [
@@ -106,30 +169,29 @@
         ],
         id_role: "",
         password: "",
-        passwordRules: [
-          v => !!v || 'Пароль - обязательное поле',
-          v => (v && v.length >= 3) || 'Пароль должен содержать не менее 3-х символов'
-        ],
+        password2: "",
+        email:"",
+        rules: {
+          required: value => !!value || 'обязательное поле',
+          equalPasswords: value => (value && value === this.password) || 'Пароли не совпадают',
+          email: value => {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            return pattern.test(value) || 'Неверный email'
+          },
+          counter_min: value => value.length > 3 || 'Минимум 3 символа',
+          phone: value => value && value.toString().length === 10 || 'Введите 10 цифр номера телефона',
+        },
         name1: "",
         name2: "",
         name3: "",
-        nameRules: [
-          v => !!v || 'Это поле обязательное',
-          v => (v && v.length >= 3) || 'не менее 3-х букв'
-        ],
         number_tel: null,
-        telRules:[
-          (v) => !!v || 'Это поле обязательное',
-          (v) => !!v && v.toString().length === 10 || 'Введите 10 цифр номера телефона',
-        ],
         dialog: true,
-
         agreementState: false,
-        selectedRole: {text: "Пользователь", id:4},
+        selectedRole: {text: "Пользователь", id: 4},
         roles: [
-          {text: "Пользователь", id:4},
-          {text: "Управляющий компании", id:4},
-          {text: "Диспетчер", id:7}]
+          {text: "Пользователь", id: 4},
+          {text: "Управляющий компании", id: 4},
+          {text: "Диспетчер", id: 7}]
       }
     },
     methods: {
@@ -148,7 +210,7 @@
               number_tel: this.number_tel
             });
           prom.then(success => {
-            if (success){
+            if (success) {
               this.errorAlert = false;
               this.successAlert = true;
 
@@ -168,7 +230,7 @@
         }
       },
       decrementCounter: function () {
-        if(this.countTimer-- <= 0){
+        if (this.countTimer-- <= 0) {
           this.$parent.flag_register_user = false;
         }
         else setTimeout(this.decrementCounter, 1000);

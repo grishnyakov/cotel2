@@ -12,7 +12,8 @@ let initialState = {
     name2: '', //Ivan
     name3: '', //Ivanovich
     hash: '',
-    id: 0
+    id: 0,
+    email: "",
   },
   userAuthorized: false,
   ORG_INFO: {},
@@ -82,6 +83,26 @@ const actions = {
           }
           else {
             console.log("reguser: FAILED!");
+          }
+          resolve(data.success);
+        })
+        .catch((er) => {
+          reject(er);
+        });
+    })
+  },      //new user
+  ValidateEmail({commit}, User) {
+    return new Promise((resolve, reject) => {
+      let params = {
+        email: User.email,
+      };
+      request.getDataFromServer('/validateEmail', params)
+        .then((data) => {
+          if (data.success) {
+            console.log("validateEmail: SECCESSFUL!");
+          }
+          else {
+            console.log("validateEmail: FAILED!");
           }
           resolve(data.success);
         })

@@ -16,7 +16,7 @@
                   <v-layout wrap>
                     <v-flex xs12>
                       <v-text-field
-                        label="Логин (ИНН)"
+                        label="Логин"
                         :rules="loginRules"
                         v-model="login"
                         required>
@@ -51,6 +51,7 @@
             </v-form>
           </v-card>
         </v-dialog>
+
       </v-layout>
     </v-app>
   </div>
@@ -68,6 +69,7 @@
       return {
         valid: true,
         dialog: true,
+
         login: "",
         loginRules: [
           v => !!v || 'Логин - обязательное поле',
