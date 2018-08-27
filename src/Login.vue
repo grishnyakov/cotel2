@@ -116,5 +116,32 @@
 </script>
 
 
+<style lang="scss">
+  //Вот, что я умею на SCSS!
+
+  //@import "style"; //импорт другого css, не требуется в этом проекте
+
+  @mixin shadow($size){  //местная функция - это прекрасно
+    box-shadow: $size $size rgba(0,0,0,0.5); /* Параметры тени */
+  }
+
+  $back_color: #2aa59e; //переменные - огонь
+  $font-stack:  'M PLUS Rounded 1c', sans-serif;
+
+  .overlay:before{
+    background-color: $back_color;
+  }
+  body{
+    .application{ //вложенность - зачёт
+      font-family: $font-stack!important;
+    }
+    .dialog{
+      @include shadow(15px);
+    }
+  }
+
+</style>
+
+
 
 
