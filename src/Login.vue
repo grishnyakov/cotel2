@@ -128,6 +128,14 @@
   $back_color: #2aa59e; //переменные - огонь
   $font-stack:  'M PLUS Rounded 1c', sans-serif;
 
+
+  %input_error{
+    color: darkred!important;
+  }
+
+  ////////////////////////////////////////////////////////////////////////////
+
+
   .overlay:before{
     background-color: $back_color;
   }
@@ -137,6 +145,9 @@
     }
     .dialog{
       @include shadow(15px);
+    }
+    .error--text input{
+        @extend %input_error;
     }
   }
 
