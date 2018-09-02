@@ -1,3 +1,4 @@
+'use strict'
 /*
   This file contains user info
   Methods registration, authorization user
@@ -89,7 +90,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       let params = {
         query: User.query,
-        email: User.email,
+        login: User.login,
         code: User.code,
       };
       request.getDataFromServer('/user/validateEmail', params)

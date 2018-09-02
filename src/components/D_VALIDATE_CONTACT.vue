@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="500px">
-    <v-card v-if="showSendCodeCard">
-      <v-form ref="sendCodeForm" v-model="valid2" lazy-validation>
+  <v-dialog v-model="dialog" persistent max-width="450px">
+    <v-card>
+      <v-form ref="validateForm" v-model="valid" lazy-validation>
         <v-card-title>
           <span class="headline">Подтверждение email</span>
         </v-card-title>
@@ -9,44 +9,14 @@
           <v-container grid-list-md>
             <v-layout wrap>
 
-              <v-flex xs8>
-                <v-text-field
-                  v-model="email"
-                  :rules="[rules.required, rules.email]"
-                  label="E-mail"
-                  required
-                ></v-text-field>
-              </v-flex>
-              <v-flex xs4>
-                <v-btn color="blue darken-1" @click.native="sendCode" :disabled="!valid2" flat>
-                  Отправить код
-                </v-btn>
+              <v-flex xs12>
+                <h3>На ваш e-mail мы отправили код, который необходимо вставить в это поле: </h3>
               </v-flex>
 
             </v-layout>
-          </v-container>
-        </v-card-text>
-      </v-form>
-    </v-card>
-    <v-card v-else="showSendCodeCard">
-      <v-form ref="validateForm" v-model="valid" lazy-validation>
-        <v-card-title>
-          <span class="headline">Подтверждение email - код отправлен</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
             <v-layout wrap>
 
-              <v-flex xs6>
-                <v-text-field
-                  v-model="email"
-                  :rules="[rules.required, rules.email]"
-                  label="E-mail"
-                  :readonly="true"
-                ></v-text-field>
-              </v-flex>
-
-              <v-flex xs6>
+              <v-flex xs12>
                 <v-text-field
                   v-model="code"
                   label="Код из письма"
@@ -57,26 +27,31 @@
             </v-layout>
           </v-container>
           <v-alert
+            :value="info"
+            type="info"
+          >
+            {{info}}
+          </v-alert>
+          <v-alert
             :value="true"
             type="success"
-            v-model="successAlert"
+            v-model="successMessage"
           >
             Email успешно подтверждён.<br>Через {{countTimer}} секунды вы будете перенаправлены на
             страницу авторизации...
           </v-alert>
           <v-alert
-            :value="true"
+            :value="errorMessage"
             type="error"
-            v-model="errorAlert"
           >
-            Возникла ошибка при подтверждении email. Обратитесь в техподдержку: sit45@mail.ru
+            {{errorMessage}}
           </v-alert>
         </v-card-text>
         <v-divider class="mt-1"></v-divider>
         <v-card-actions>
-          <v-btn color="orange darken-1" @click="showSendCodeCard=true" flat>Отправить ещё раз</v-btn>
+          <v-btn color="orange darken-1" @click="sendCode" flat>Отправить ещё раз</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" @click="submit" type="submit" :disabled="!valid" flat>
+          <v-btn color="blue darken-1" @click="submit" type="submit" :rules="[rules.required]" :disabled="!valid" flat>
             Подтведить
           </v-btn>
         </v-card-actions>
@@ -90,23 +65,17 @@
     name: "D_VALIDATE_CONTACT",
     data() {
       return {
-        successAlert: false, //flag to show success creation message
-        errorAlert: false,//flag to show alert message
+        successMessage: false, //flag to show success creation message
+        errorMessage: false,//flag to show alert message
         countTimer: 4,
         valid: false, // valid inputs on form check code
-        valid2: false, // valid inputs on form send code
         code: null,
-        email: "",
+        info: "",
         rules: {
           required: value => !!value || 'обязательное поле',
-          email: value => {
-            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            return pattern.test(value) || 'Неверный email'
-          },
-          counter_min: value => value.length > 3 || 'Минимум 3 символа',
+          counter_min: value => value.length >= 3 || 'Минимум 3 символа',
         },
         dialog: true,
-        showSendCodeCard: true
       }
     },
     methods: {
@@ -116,54 +85,58 @@
           let promise = this.$store.dispatch('user/ValidateEmail',
             {
               query: 'checkCode',
-              email: this.email,
               code: this.code,
+              login: this.$attrs.login,
             });
-          promise.then(onFulfilled, onRejected);
           let self = this;
-          function onFulfilled(success) {
-            if (success) {
-              self.errorAlert = false;
-              self.successAlert = true;
 
-              self.decrementCounter();
+          promise.then(
+            success => {
+              if (success) {
+                this.hideError();
+                this.hideInfo();
+                this.successMessage = true;
+                self.decrementCounter();
+              }
+              else {
+                this.showError();
+                console.error("fail checkCode");
+              }
+            },
+            error => {
+              this.showError(error.text);
+              console.error(error);
             }
-            else {
-              self.successAlert = false;
-              self.errorAlert = true;
-              console.error("fail checkCode");
-            }
-          }
-
-          function onRejected(err) {
-            self.errorAlert = true;
-            console.error(err);
-          }
+          );
 
         }
       },
       sendCode() {
-        if (this.$refs.sendCodeForm.validate()) {
-          this.showSendCodeCard = false;
-          let prom = this.$store.dispatch('user/ValidateEmail',
-            {
-              query: 'sendCode',
-              email: this.email,
-            });
-          prom.then(success => {
-            if (success) {
-              this.errorAlert = false;
-            }
-            else {
-              this.errorAlert = true;
-              console.error("fail send code");
-            }
-          });
-          prom.catch(err => {
-            this.errorAlert = true;
-            console.error(err);
-          })
+        console.log("sendCode");
+        if(!this.$attrs.login) {
+          console.error('нет логина в this.$attrs.login',this.$attrs);
+          return;
         }
+        let promise = this.$store.dispatch('user/ValidateEmail',
+          {
+            query: 'sendCode',
+            login: this.$attrs.login,
+          });
+
+
+        promise.then(
+          status => {
+            if (status)
+              this.showInfo("Код отправлен на почтовый адрес указанный при регистрации");
+            else
+              this.showError();
+          },
+          error => {
+            this.showError();
+          }
+        )
+
+
       },
       decrementCounter: function () {
         if (this.countTimer-- < 1) {
@@ -172,11 +145,31 @@
         }
         else setTimeout(this.decrementCounter, 1000);
       },
+      showInfo(text = "Код отправлен на почтовый адрес указанный при регистрации") {
+        if (text) {
+          this.errorMessage = '';
+          this.info = text;
+        }
+      },
+      hideInfo() {
+        this.info = '';
+      },
+      showError(text = "Возникла ошибка при подтверждении email. Обратитесь в техподдержку: sit45@mail.ru") {
+        if (text) {
+          this.info = '';
+          this.successMessage = false;
+          this.errorMessage = text;
+        }
+        else {
+
+        }
+      },
+      hideError() {
+        this.errorMessage = '';
+      }
     },
     mounted() {
-      if (this.$attrs.email) {
-        this.email = this.$store.state.user.USER.email;
-      }
+      this.sendCode();
     }
   }
 </script>

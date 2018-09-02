@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ValidateContact v-if="flag_validate_contact"></ValidateContact>
+    <ValidateContact v-if="flag_validate_contact" v-bind:login="login"></ValidateContact>
     <RegisterUser v-if="flag_register_user"></RegisterUser>
     <v-app id="inspire">
       <v-layout row justify-center>
@@ -35,7 +35,19 @@
 
                   </v-layout>
                 </v-container>
-
+                <v-alert
+                  :value="warning"
+                  type="warning"
+                >
+                  {{warning}}
+                  <v-btn v-if="showConfirmButton" @click="flag_validate_contact = true">Подтвердить email</v-btn>
+                </v-alert>
+                <v-alert
+                  :value="alert"
+                  type="error"
+                >
+                  {{alert}}
+                </v-alert>
               </v-card-text>
               <v-card-actions>
                 <v-btn color="green darken-1" @click.native="flag_register_user = true" flat>Регистрация физ.
@@ -62,6 +74,7 @@
 <script>
   import RegisterUser from "./RegisterUser.vue"
   import ValidateContact from "./components/D_VALIDATE_CONTACT.vue"
+  const {STATUS} = require('./store/const.js');
 
   import {mapGetters, mapState} from 'vuex'
 
@@ -72,8 +85,10 @@
       return {
         flag_validate_contact: false,
         valid: true,
+        showConfirmButton: false,
         dialog: true,
-
+        alert: '', // текст ошибки
+        warning: '', // текст предупреждения
         login: "",
         loginRules: [
           v => !!v || 'Логин - обязательное поле',
@@ -95,13 +110,30 @@
     methods: {
       submit() {
         if (this.$refs.loginForm.validate()) {
-          let promice = this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
-          promice.then(
-            status=>{
-              if(status === 1)
-                this.flag_validate_contact=true;
-            },
-            error=>{
+          this.alert = "";
+          this.warning = '';
+          let promise = this.$store.dispatch('user/LogIN', {login: this.login, password: this.password});
+          promise.then(
+            status => {
+
+              if (status === STATUS.ACTIVE.id) {
+                this.warning = "";
+              }
+              else {
+                let currentStatus = STATUS.getStatusById(status);
+                if(currentStatus)
+                  this.warning = currentStatus.info;
+                else this.warning = "Неизвестный статус пользователя ";
+              }
+
+
+              if (status === STATUS.NOT_CONFIRMED.id)
+                this.showConfirmButton = true;
+              else this.showConfirmButton = false;
+            }
+            ,
+            error => {
+              this.alert = error.text || "Возникла ошибка при авторизации. Обратитесь в техподдержку";
               console.error(error);
             }
           )
@@ -111,7 +143,7 @@
     created: function () {
       this.$store.dispatch('user/GetSession', {}); //попытка получить текущую сессию если она есть
     },
-    components: {RegisterUser,ValidateContact}
+    components: {RegisterUser, ValidateContact}
   }
 </script>
 
@@ -121,33 +153,32 @@
 
   //@import "style"; //импорт другого css, не требуется в этом проекте
 
-  @mixin shadow($size){  //местная функция - это прекрасно
-    box-shadow: $size $size rgba(0,0,0,0.5); /* Параметры тени */
+  @mixin shadow($size) { //местная функция - это прекрасно
+    box-shadow: $size $size rgba(0, 0, 0, 0.5); /* Параметры тени */
   }
 
   $back_color: #2aa59e; //переменные - огонь
-  $font-stack:  'M PLUS Rounded 1c', sans-serif;
+  $font-stack: 'M PLUS Rounded 1c', sans-serif;
 
-
-  %input_error{
-    color: darkred!important;
+  %input_error {
+    color: darkred !important;
   }
 
   ////////////////////////////////////////////////////////////////////////////
 
-
-  .overlay:before{
+  .overlay:before {
     background-color: $back_color;
   }
-  body{
-    .application{ //вложенность - зачёт
-      font-family: $font-stack!important;
+
+  body {
+    .application { //вложенность - зачёт
+      font-family: $font-stack !important;
     }
-    .dialog{
+    .dialog {
       @include shadow(15px);
     }
-    .error--text input{
-        @extend %input_error;
+    .error--text input {
+      @extend %input_error;
     }
   }
 

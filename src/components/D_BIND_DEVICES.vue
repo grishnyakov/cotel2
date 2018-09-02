@@ -57,9 +57,8 @@
           </v-container>
           <v-divider class="mt-1"></v-divider>
           <v-alert
-            :value="true"
+            :value="errorMessage"
             type="error"
-            v-model="errorAlert"
           >
             {{errorMessage}}
           </v-alert>
@@ -90,8 +89,7 @@
       info: "",
       errorMessage: "Возникла ошибка. Обратитесь в техподдержку: sit45@mail.ru",
       valid: true, // valid inputs on form
-      successAlert: false, //flag to show success creation message
-      errorAlert: false,//flag to show alert message
+      successMessage: false, //flag to show success creation message
       markers: [],
       currentPlace: {},
       requiredField: [
@@ -122,13 +120,11 @@
               }
               else {
                 this.errorMessage = "Ошибка привязки: "+ result.error;
-                this.errorAlert = true;
                 console.error("Ошибка : ",result.error);
               }
             })
             .catch(error=>{
               this.errorMessage = "Ошибка привязки: "+ error;
-              this.errorAlert = true;
               console.error("Ошибка : ",error);
             });
         }
@@ -183,7 +179,7 @@
       },
       clear: function () {
         this.$refs.bindDeviceForm.reset();
-        this.errorAlert = false;
+        this.errorMessage = '';
         console.log("clear");
       }
     }
