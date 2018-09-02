@@ -149,6 +149,12 @@
 
 
 
+<style>
+  .v-text-field__slot input{
+    padding-left: 8px;
+  }
+</style>
+
 <style lang="scss">
   //Вот, что я умею на SCSS!
 
