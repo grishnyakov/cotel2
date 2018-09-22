@@ -15,6 +15,7 @@
         Настройка параметров
       </v-btn>
 
+      
       <v-card>
         <v-list>
           <v-list-tile avatar>
