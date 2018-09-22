@@ -25,34 +25,8 @@
 
 
             <v-layout wrap>
-
               Место установки
-              <GmapAutocomplete
-                v-on:place_changed="place_changed"
-                style="width: 500px; height: 30px; padding: 5px; margin: 5px; border-bottom: 1px solid gray; outline: none;"
-              ></GmapAutocomplete>
-
-              <v-flex xs12>
-                <GmapMap
-                  :center="{
-                    lat:55.4649113,
-                    lng:65.30535120000002
-                  }"
-                  :zoom="11"
-                  map-type-id="terrain"
-                  style="width: 500px; height: 300px"
-                  ref="mapRef"
-                >
-                  <GmapMarker
-                    :key="index"
-                    v-for="(m, index) in markers"
-                    :position="m.position"
-                    :clickable="true"
-                    :draggable="false"
-                    @click="center=m.position"
-                  />
-                </GmapMap>
-              </v-flex>
+              <T_YMAP_DEV></T_YMAP_DEV>
             </v-layout>
           </v-container>
           <v-divider class="mt-1"></v-divider>
@@ -79,6 +53,8 @@
 
 <script>
   import {mapState} from 'vuex'
+  import T_YMAP_DEV from './T_YMAP_DEV'
+
   export default {
 
     name: "D_BIND_DEVICE",
@@ -129,60 +105,13 @@
             });
         }
       },
-      place_changed: function (place) {
-        console.log("place_changed!", place);
-        this.currentPlace = place;
-        if (!place.geometry) {
-          // User entered the name of a Place that was not suggested and
-          // pressed the Enter key, or the Place Details request failed.
-          console.error("No details available for input: '" + place.name + "'");
-          return;
-        }
-
-
-        // If the place has a geometry, then present it on a map.
-        if (place.geometry.viewport) {
-          console.log("IF ");
-          console.log();
-          this.$refs.mapRef.$mapPromise.then((map) => {
-            map.fitBounds(place.geometry.viewport);
-          })
-        } else {
-          console.log("ELSE ");
-          //   map.setCenter(place.geometry.location);
-          //   map.setZoom(17);  // Why 17? Because it looks good.
-        }
-        // marker.setPosition(place.geometry.location);
-        // marker.setVisible(true);
-        this.markers = [];
-        this.markers.push({
-          position: {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-          }
-        });
-
-        var address = '';
-        if (place.address_components) {
-          address = [
-            (place.address_components[0] && place.address_components[0].short_name || ''),
-            (place.address_components[1] && place.address_components[1].short_name || ''),
-            (place.address_components[2] && place.address_components[2].short_name || '')
-          ].join(' ');
-        }
-
-        // infowindowContent.children['place-icon'].src = place.icon;
-        // infowindowContent.children['place-name'].textContent = place.name;
-        // infowindowContent.children['place-address'].textContent = address;
-        // infowindow.open(map, marker);
-
-      },
       clear: function () {
         this.$refs.bindDeviceForm.reset();
         this.errorMessage = '';
         console.log("clear");
       }
-    }
+    },
+    components: {T_YMAP_DEV}
   }
 </script>
 

@@ -15,9 +15,7 @@
         <td class="text-xs-left">{{ props.item.id_type }}</td>
         <td class="text-xs-left">{{ props.item.info }}</td>
         <td class="justify-center layout px-0">
-          <v-btn icon class="mx-0" >
-            <v-icon color="teal">edit</v-icon>
-          </v-btn>
+          <C_DEVICE_SETTINGS v-bind:idDevice = "props.item.id"></C_DEVICE_SETTINGS>
         </td>
       </template>
     </v-data-table>
@@ -29,17 +27,18 @@
 
 <script>
   import D_BIND_DEVICES from "./D_BIND_DEVICES";
+  import C_DEVICE_SETTINGS from "./C_DEVICE_SETTINGS";
   import {mapGetters, mapState} from 'vuex'
 
   export default {
-    components: {D_BIND_DEVICES},
+    components: {D_BIND_DEVICES, C_DEVICE_SETTINGS},
     data () {
       return {
         headers: [
           { text: 'ID', value: 'id' },
           { text: 'Тип устройсва', value: 'id_type' },
           { text: 'Информация', value: 'info' },
-          { text: 'Действия', value: 'action', align: "center",sortable: false }
+          { text: '', value: 'action', align: "center",sortable: false }
         ],
       }
     },

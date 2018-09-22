@@ -6,7 +6,6 @@ import Login from './Login'
 import App from './App'
 import VueCookie from 'vue-cookie'
 import VueSessionStorage from 'vue-sessionstorage'
-import * as VueGoogleMaps from 'vue2-google-maps'
 
 import VueRouter from 'vue-router'
 import routes from './router.js'
@@ -17,32 +16,6 @@ const CONF = require('../config/index');
 
 import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 
-
-
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: 'AIzaSyAlu17PuCOggAb8q65PiJ2RhOkIwEzUxto', //
-    libraries: 'places', // This is required if you use the Autocomplete plugin
-    // OR: libraries: 'places,drawing'
-    // OR: libraries: 'places,drawing,visualization'
-    // (as you require)
-
-    //// If you want to set the version, you can do so:
-    // v: '3.26',
-  },
-
-  //// If you intend to programmatically custom event listener code
-  //// (e.g. `this.$refs.gmap.$on('zoom_changed', someFunc)`)
-  //// instead of going through Vue templates (e.g. `<GmapMap @zoom_changed="someFunc">`)
-  //// you might need to turn this on.
-  // autobindAllEvents: false,
-
-  //// If you want to manually install components, e.g.
-  //// import {GmapMarker} from 'vue2-google-maps/src/components/marker'
-  //// Vue.component('GmapMarker', GmapMarker)
-  //// then disable the following:
-  // installComponents: true,
-});
 
 Vue.use(VueRouter);
 Vue.use(Vuetify);

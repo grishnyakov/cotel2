@@ -19,7 +19,6 @@
     "vue-router": "^3.0.1",
     "vue-sessionstorage": "^1.0.0",
     "vue-time-picker": "^0.2.6",
-    "vue2-google-maps": "^0.10.2",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -59,6 +58,7 @@
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
+    "vue-yandex-maps": "^0.7.15",
     "vueify": "^9.4.1",
     "vuetify": "^1.0.14",
     "webpack": "^3.6.0",

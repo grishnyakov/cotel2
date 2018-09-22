@@ -155,41 +155,41 @@
   }
 </style>
 
-<style lang="scss">
-  //Вот, что я умею на SCSS!
+<!--<style lang="scss">-->
+  <!--//Вот, что я умею на SCSS!-->
 
-  //@import "style"; //импорт другого css, не требуется в этом проекте
+  <!--//@import "style"; //импорт другого css, не требуется в этом проекте-->
 
-  @mixin shadow($size) { //местная функция - это прекрасно
-    box-shadow: $size $size rgba(0, 0, 0, 0.5); /* Параметры тени */
-  }
+  <!--@mixin shadow($size) { //местная функция - это прекрасно-->
+    <!--box-shadow: $size $size rgba(0, 0, 0, 0.5); /* Параметры тени */-->
+  <!--}-->
 
-  $back_color: #2aa59e; //переменные - огонь
-  $font-stack: 'M PLUS Rounded 1c', sans-serif;
+  <!--$back_color: #2aa59e; //переменные - огонь-->
+  <!--$font-stack: 'M PLUS Rounded 1c', sans-serif;-->
 
-  %input_error {
-    color: darkred !important;
-  }
+  <!--%input_error {-->
+    <!--color: darkred !important;-->
+  <!--}-->
 
-  ////////////////////////////////////////////////////////////////////////////
+  <!--////////////////////////////////////////////////////////////////////////////-->
 
-  .overlay:before {
-    background-color: $back_color;
-  }
+  <!--.overlay:before {-->
+    <!--background-color: $back_color;-->
+  <!--}-->
 
-  body {
-    .application { //вложенность - зачёт
-      font-family: $font-stack !important;
-    }
-    .dialog {
-      @include shadow(15px);
-    }
-    .error--text input {
-      @extend %input_error;
-    }
-  }
+  <!--body {-->
+    <!--.application { //вложенность - зачёт-->
+      <!--font-family: $font-stack !important;-->
+    <!--}-->
+    <!--.dialog {-->
+      <!--@include shadow(15px);-->
+    <!--}-->
+    <!--.error&#45;&#45;text input {-->
+      <!--@extend %input_error;-->
+    <!--}-->
+  <!--}-->
 
-</style>
+<!--</style>-->
 
 
 
