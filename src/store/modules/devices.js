@@ -103,7 +103,7 @@ const actions = {
 
     BindDeviceToUser({commit, state, getters}, props) {
       return new Promise((resolve, reject) => {
-        request.getDataFromServer('/data/devices/bind', props)
+        request.getDataFromServer('/data/devices', props)
           .then((result) => {
             resolve(result);
           })
