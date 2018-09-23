@@ -1,7 +1,7 @@
 <template>
   <div class="text-xs-center">
     <v-menu
-      v-model="menu"
+      v-model="showDialog"
       :close-on-content-click="false"
       nudge-left="1"
       bottom left offset-y
@@ -81,8 +81,8 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn flat @click="menu = false">Отмена</v-btn>
-          <v-btn color="primary" flat @click="menu = false">Сохранить</v-btn>
+          <v-btn flat @click="showDialog = false">Отмена</v-btn>
+          <v-btn color="primary" flat @click="save">Сохранить</v-btn>
         </v-card-actions>
       </v-card>
     </v-menu>
@@ -94,10 +94,8 @@
   export default {
     name: "C_DEVICE_SETTINGS",
     data: () => ({
-      fav: true,
-      menu: false,
-      message: true,
-      hints: true,
+      showDialog: false,
+      message: '',
       device: {
         settings: {
           t1u: 90,
@@ -109,13 +107,23 @@
       }
 
     }),
+    methods:{
+      save(){
+
+        let promise = this.$store.dispatch("devices/SaveDeviceSettings",this.device);
+        promise.then(
+          result=>{
+
+            this.showDialog = false;
+          }
+        )
+      }
+    },
     props: {
       idDevice: Number
     },
-    computed: {},
     mounted() {
       this.device = this.$store.getters["devices/getDeviceById"](this.idDevice)[0];
-
     }
   }
 </script>

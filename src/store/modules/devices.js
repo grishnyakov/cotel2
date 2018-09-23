@@ -28,88 +28,114 @@ const getters = {
     return getters.getDeviceList.map(device => device.id);
   },
   getDeviceById: (state) => (idDevice) => {
-    return state.DEVICE_LIST.filter(device  => device.id === idDevice);
+    return state.DEVICE_LIST.filter(device => device.id === idDevice);
   },
 };
 
 const actions = {
-  RequestNewDeviceList({commit, state}, User) {
-    return new Promise(((resolve, reject) => {
-      request.getDataFromServer('/data/devices', {login: User.login})
+    RequestNewDeviceList({commit, state}, User) {
+      return new Promise(((resolve, reject) => {
+        request.getDataFromServer('/data/devices', {
+          query: 'SELECT',
+          type: 'DEVICES',
+          login: User.login
+        })
+          .then((result) => {
+            if (result.success) {
+              console.log("RequestDeviceList: SUCCESS!", result);
+              commit('SetDeviceList', result.devices);
+            }
+            else {
+              console.log("RequestDeviceList: FAILED!", result);
+            }
+            resolve(result.success);
+          })
+          .catch((er) => {
+            reject(er);
+          });
+      }));
+    },
+    RequestNewAlertList({commit, state, getters}) {
+      request.getDataFromServer('/data/dangerlist', {
+        devices: getters.getIdsOfDevices
+      })
         .then((result) => {
           if (result.success) {
-            console.log("RequestDeviceList: SUCCESS!", result);
-            commit('SetDeviceList', result.devices);
+            console.log("RequestNewAlertList: SUCCESS!", result);
+            commit('SetAlertList', result.danger_list);
           }
           else {
-            console.log("RequestDeviceList: FAILED!", result);
+            console.log("RequestNewAlertList: FAILED!", result);
           }
-          resolve(result.success);
         })
         .catch((er) => {
-          reject(er);
-        });
-    }));
-  },
-  RequestNewAlertList({commit, state, getters}) {
-    request.getDataFromServer('/data/dangerlist', {
-      devices: getters.getIdsOfDevices
-    })
-      .then((result) => {
-        if (result.success) {
-          console.log("RequestNewAlertList: SUCCESS!", result);
-          commit('SetAlertList', result.danger_list);
-        }
-        else {
-          console.log("RequestNewAlertList: FAILED!", result);
-        }
-      })
-      .catch((er) => {
 
-      });
-  },
-  RequestNewMessageList({commit, state, getters}, ids_devices) {
-    return new Promise((resolve, reject) => {
-      request.getDataFromServer('/data/messages', {
-        params: [ids_devices],
-        type_query: "messages"
-      })
-        .then((result) => {
-          if (result.success && result.result) {
-            console.log("RequestNewMessageList: SUCCESS!", result);
-            let messages = [];
-            for (let key in result.result) {
-              if (result.result.hasOwnProperty(key)) {
-                messages.push(result.result[key]);
+        });
+    },
+    RequestNewMessageList({commit, state, getters}, ids_devices) {
+      return new Promise((resolve, reject) => {
+        request.getDataFromServer('/data/messages', {
+          params: [ids_devices],
+          type_query: "messages"
+        })
+          .then((result) => {
+            if (result.success && result.result) {
+              console.log("RequestNewMessageList: SUCCESS!", result);
+              let messages = [];
+              for (let key in result.result) {
+                if (result.result.hasOwnProperty(key)) {
+                  messages.push(result.result[key]);
+                }
               }
+              commit('SetMessageList', messages);
+              resolve(true);
             }
-            commit('SetMsssageList', messages);
-            resolve(true);
-          }
-          else {
-            console.log("RequestNewMessageList: FAILED!", result);
-            resolve(false);
-          }
-        })
-        .catch((er) => {
-          reject(er);
-        });
-    });
-  },
+            else {
+              console.log("RequestNewMessageList: FAILED!", result);
+              resolve(false);
+            }
+          })
+          .catch((er) => {
+            reject(er);
+          });
+      });
+    },
 
-  BindDeviceToUser({commit, state, getters}, props) {
-    return new Promise((resolve, reject) => {
-      request.getDataFromServer('/data/devices/bind', props)
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((er) => {
-          reject(er);
-        });
+    BindDeviceToUser({commit, state, getters}, props) {
+      return new Promise((resolve, reject) => {
+        request.getDataFromServer('/data/devices/bind', props)
+          .then((result) => {
+            resolve(result);
+          })
+          .catch((er) => {
+            reject(er);
+          });
 
-    })
+      })
+    },
+    SaveDeviceSettings({commit, state, getters}, device) {
+
+      return new Promise((resolve, reject) => {
+        let props = {
+          query: 'UPDATE',
+          type: 'SETTINGS',
+          device: device
+        };
+        request.getDataFromServer('/data/devices', props)
+          .then((result) => {
+            if (result.success !== true) {
+              reject(result);
+            }
+            else commit('SetDeviceSettings', device);
+            resolve(result.success);
+          })
+          .catch((er) => {
+            reject(er);
+          });
+
+      })
+    }
   }
-}
 ;
 
 const mutations = {
@@ -117,7 +143,7 @@ const mutations = {
     state.DEVICE_LIST = devices;
     console.log("COMMIT: SetDeviceList", devices);
   },
-  SetMsssageList(state, messages) {
+  SetMessageList(state, messages) {
     state.MESSAGE_LIST = messages;
     console.log("COMMIT: getMessageList", messages);
   },
@@ -135,6 +161,14 @@ const mutations = {
       }
     }
     console.log(state);
+  },
+  SetDeviceSettings(state, deviceLocal) {
+    state.DEVICE_LIST.map(
+      device => {
+        if (device.id === deviceLocal.id)
+          device.settings = deviceLocal.settings
+      }
+    );
   }
 };
 
