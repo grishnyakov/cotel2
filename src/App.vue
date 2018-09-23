@@ -96,7 +96,7 @@
 
     name: 'App',
     data: () => ({
-      drawer: true,
+      drawer: false,
       clipped: false,
 
       items: [

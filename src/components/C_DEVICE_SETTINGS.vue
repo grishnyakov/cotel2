@@ -15,7 +15,7 @@
         Настройка параметров
       </v-btn>
 
-      
+
       <v-card>
         <v-list>
           <v-list-tile avatar>
@@ -33,20 +33,20 @@
 
           <v-list-tile>
             <v-layout row wrap>
-              <v-flex  sm5>
+              <v-flex sm5>
                 <v-text-field
-                  v-model="t1u"
-                  label = "Темп. теплоносителя"
+                  v-model="device.settings.t1u"
+                  label="Темп. теплоносителя"
                   suffix="°C"
                 ></v-text-field>
               </v-flex>
               <v-flex sm1>
 
               </v-flex>
-              <v-flex  sm5>
+              <v-flex sm5>
                 <v-text-field
-                  v-model="t2u"
-                  label = "Темп. помещения"
+                  v-model="device.settings.t2u"
+                  label="Темп. помещения"
                   suffix="°C"
                 ></v-text-field>
               </v-flex>
@@ -56,14 +56,14 @@
 
           <v-list-tile>
             <v-list-tile-action>
-              <v-switch v-model="message" color="blue"></v-switch>
+              <v-switch v-model="device.settings.vv" color="blue"></v-switch>
             </v-list-tile-action>
             <v-list-tile-title>Тревога при протечке (vv)</v-list-tile-title>
           </v-list-tile>
 
           <v-list-tile>
             <v-list-tile-action>
-              <v-switch v-model="hints" color="blue"></v-switch>
+              <v-switch v-model="device.settings.ee" color="blue"></v-switch>
             </v-list-tile-action>
             <v-list-tile-title>Тревога при отключении электроэнергии (ee)</v-list-tile-title>
           </v-list-tile>
@@ -71,7 +71,7 @@
 
           <v-list-tile>
             <v-list-tile-action>
-              <v-switch v-model="hints" color="blue"></v-switch>
+              <v-switch v-model="device.settings.su" color="blue"></v-switch>
             </v-list-tile-action>
             <v-list-tile-title>Отправлять СМС при тревоге (su)</v-list-tile-title>
           </v-list-tile>
@@ -90,6 +90,7 @@
 </template>
 
 <script>
+
   export default {
     name: "C_DEVICE_SETTINGS",
     data: () => ({
@@ -97,12 +98,24 @@
       menu: false,
       message: true,
       hints: true,
-      t1u: 44,
-      t2u: 25
+      device: {
+        settings: {
+          t1u: 90,
+          t2u: 20,
+          ee: false,
+          vv: false,
+          su: false,
+        }
+      }
 
     }),
     props: {
       idDevice: Number
+    },
+    computed: {},
+    mounted() {
+      this.device = this.$store.getters["devices/getDeviceById"](this.idDevice)[0];
+
     }
   }
 </script>

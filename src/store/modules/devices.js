@@ -15,17 +15,20 @@ const state = Object.assign({}, initialState);
 state.__proto__ = {initialState: initialState};
 
 const getters = {
-  GetDeviceList(state, getters, rootState) {
+  getDeviceList(state, getters, rootState) {
     return state.DEVICE_LIST;
   },
-  GetMsssageList(state, getters, rootState) {
+  getMessageList(state, getters, rootState) {
     return state.MESSAGE_LIST;
   },
-  GetAlertList(state, getters, rootState) {
+  getAlertList(state, getters, rootState) {
     return state.ALERT_LIST;
   },
-  GetIdsOfDevices(state, getters, rootState) {
-    return getters.GetDeviceList.map(device => device.id);
+  getIdsOfDevices(state, getters, rootState) {
+    return getters.getDeviceList.map(device => device.id);
+  },
+  getDeviceById: (state) => (idDevice) => {
+    return state.DEVICE_LIST.filter(device  => device.id === idDevice);
   },
 };
 
@@ -50,7 +53,7 @@ const actions = {
   },
   RequestNewAlertList({commit, state, getters}) {
     request.getDataFromServer('/data/dangerlist', {
-      devices: getters.GetIdsOfDevices
+      devices: getters.getIdsOfDevices
     })
       .then((result) => {
         if (result.success) {
@@ -116,11 +119,11 @@ const mutations = {
   },
   SetMsssageList(state, messages) {
     state.MESSAGE_LIST = messages;
-    console.log("COMMIT: GetMsssageList", messages);
+    console.log("COMMIT: getMessageList", messages);
   },
   SetAlertList(state, alerts) {
     state.ALERT_LIST = alerts;
-    console.log("COMMIT: GetAlertList", alerts);
+    console.log("COMMIT: getAlertList", alerts);
   },
   ResetState(state, payload) {
     for (let f in state) {
