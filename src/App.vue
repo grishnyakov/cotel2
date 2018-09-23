@@ -1,14 +1,16 @@
 <template>
   <v-app id="inspire">
+
     <v-navigation-drawer
       fixed
       clipped
       class="grey lighten-4"
       app
+      permanent
+      width="200"
       v-model="drawer"
     >
       <v-list
-        dense
         class="grey lighten-4"
       >
         <template v-for="(item, i) in items">
@@ -56,9 +58,10 @@
 
       </v-list>
     </v-navigation-drawer>
+
     <v-toolbar color="amber" app absolute clipped-left>
       <v-toolbar-side-icon @click.native="drawer = !drawer"></v-toolbar-side-icon>
-      <span class="title ml-3 mr-5">SIT&nbsp;<span class="text">System</span></span>
+      <span class="title ml-2 mr-5">SIT&nbsp;<span class="text">System</span></span>
       <!--<v-text-field-->
         <!--solo-inverted-->
         <!--flat-->
