@@ -1,27 +1,12 @@
 
 
 <template>
- <v-container class="scroll-y" style="overflow: hidden; max-height: 4000px;">
 
-   <v-layout row wrap>
-
-     <v-flex xs12>
        <v-card >
-         <v-card-title primary-title>
-           <div>
-             <h3 class="">Состояния устройств</h3>
-           </div>
-         </v-card-title>
-         <v-card-text>
+
            <T_DEVICES_STATE></T_DEVICES_STATE>
-         </v-card-text>
+
        </v-card>
-     </v-flex>
-
-
-   </v-layout>
-
-  </v-container>
 
 </template>
 

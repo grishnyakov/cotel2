@@ -27,8 +27,8 @@
 
 
               <v-layout wrap>
-                Место установки
-                <T_YMAP_DEV></T_YMAP_DEV>
+                Место установки {{currentPlace.coordinates}}
+                <T_YMAP_DEV v-on:setGeometry="setGeometry"></T_YMAP_DEV>
               </v-layout>
             </v-container>
             <v-divider class="mt-1"></v-divider>
@@ -69,7 +69,11 @@
       valid: true, // valid inputs on form
       successMessage: false, //flag to show success creation message
       markers: [],
-      currentPlace: {},
+      currentPlace: {
+        coordinates: [],
+        formatted_address: "",
+        place_id: null
+      },
       requiredField: [
         v => !!v || 'Это поле обязательное',
       ]
@@ -89,8 +93,8 @@
               id_device: this.number,
               pin: this.pin,
               info: this.info,
-              lat: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lat() : null,
-              lng: (typeof this.currentPlace.geometry !== 'undefined') ? this.currentPlace.geometry.location.lng() : null,
+              lat: (typeof this.currentPlace.coordinates !== 'undefined') ? this.currentPlace.coordinates[0] : null,
+              lng: (typeof this.currentPlace.coordinates !== 'undefined') ? this.currentPlace.coordinates[1] : null,
               formatted_address: this.currentPlace.formatted_address,
               place_id: this.currentPlace.place_id
             }
@@ -116,6 +120,9 @@
         this.$refs.bindDeviceForm.reset();
         this.errorMessage = '';
         console.log("clear");
+      },
+      setGeometry: function(geometry){
+        this.currentPlace.coordinates  = geometry.getCoordinates();
       }
     },
     components: {T_YMAP_DEV}

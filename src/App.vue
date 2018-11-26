@@ -79,10 +79,10 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-      <v-container wrap grid-list-md text-xs-center class="container">
+      <v-container fluid>
 
         <v-layout justify-center row>
-          <v-flex xs11>
+          <v-flex xs12>
             <router-view></router-view>
           </v-flex>
         </v-layout>

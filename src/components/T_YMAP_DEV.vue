@@ -1,17 +1,31 @@
 <template>
-  <yandex-map
-    :coords="[55.33868,65.276724]"
-    zoom="10"
-    style="width: 600px; height: 600px;"
-    :cluster-options="{
+  <div>
+    <yandex-map
+      :coords="[55.33868,65.276724]"
+      zoom="10"
+      style="width: 600px; height: 600px;"
+      :cluster-options="{
 
   }"
-    :behaviors="['default']"
-    :controls="['zoomControl','searchControl','geolocationControl']"
-    :placemarks="placemarks"
-    map-type="map"
-  >
-  </yandex-map>
+      :behaviors="['default']"
+      :controls="['zoomControl','searchControl','geolocationControl']"
+      map-type="map"
+    >
+
+      <ymap-marker
+        marker-id="1"
+        marker-type="placemark"
+        :coords="[55.33868,65.276724]"
+        hint-content="Hint content 1"
+        :callbacks="{dragend: dragend}"
+        :options="{draggable: true}"
+        cluster-name="1"
+      ></ymap-marker>
+    </yandex-map>
+
+
+  </div>
+
 </template>
 
 <script>
@@ -19,40 +33,41 @@
 
   // or for a single instance
   import {yandexMap, ymapMarker} from 'vue-yandex-maps'
+  import Vue from 'vue'
+
 
   export default {
     name: "T_YMAP_DEV",
+    props: ["currentPlace"],
     data: () => ({
       placemarks: [
         {
-          feature:"Место установки устрйоства",
-          coords: [55.33868,65.276724],
-          properties: {
-            iconCaption  : 'hint-content',
-          }, // define properties here
-          options: {
-            draggable: true
-          }, // define options here
+          coords: [54.8, 39.8],
+          properties: {}, // define properties here
+          options: {}, // define options here
           clusterName: "1",
-
+          balloonTemplate: '<div>"Your custom template"</div>',
           callbacks: {
             click: function () {
-
-            },
-            dragend: (arg)=> {
-              const t = arg.originalEvent.target;
-              t.properties.set('iconCaption', t.geometry._bounds[1].toString());
-              debugger
-            }, // По окончании перемещения метки вызываем функцию отрисовки адреса
-            dragstart: (arg)=> {
-              const t = arg.originalEvent.target;
-              //console.log(t);
-            }// // При перемещении метки сбрасываем подпись, содержимое балуна и перекрашиваем метку.
+            }
           }
         }
       ]
     }),
-    components: {yandexMap, ymapMarker}
+    methods: {
+      dragend: function(arg) {
+        let t = arg.originalEvent.target;
+        t.properties.set('iconCaption', t.geometry._bounds[1].toString());
+        this.$emit('setGeometry',t.geometry);
+      },
+    }
+    ,
+    mounted() {
+
+    },
+    components: {
+      yandexMap, ymapMarker
+    }
   }
 </script>
 
